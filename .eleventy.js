@@ -4,6 +4,11 @@ export default function (eleventyConfig) {
     showAllHosts: true,
   });
 
+  // String prefix test for nav aria-current handling.
+  eleventyConfig.addNunjucksFilter("startswith", (str, prefix) =>
+    typeof str === "string" && str.startsWith(prefix),
+  );
+
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
 
   // Files that Cloudflare Pages expects at the deploy root.
