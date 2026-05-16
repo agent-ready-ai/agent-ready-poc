@@ -12,9 +12,12 @@ if (!url) {
   process.exit(1);
 }
 
+// chrome-launcher 1.x doesn't add --headless by default; without it Chrome
+// tries to open a window and dies in the container.
 const flags = (
   process.env.CHROME_FLAGS ?? "--no-sandbox --disable-dev-shm-usage --disable-gpu"
 ).split(" ");
+if (!flags.some((f) => f.startsWith("--headless"))) flags.push("--headless=new");
 
 const chrome = await chromeLauncher.launch({
   chromeFlags: flags,
