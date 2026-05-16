@@ -1,0 +1,14 @@
+# gitleaks allowlist for agent-ready-poc
+#
+# Inheriting the default gitleaks ruleset (8.18.x).
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Local-only and never-committed secrets. .env is in .gitignore; cf_api_token.txt was the operator's pre-prereq staging file (also gitignored)."
+
+paths = [
+  '''^\.env$''',
+  '''^cf_api_token\.txt$''',
+]
