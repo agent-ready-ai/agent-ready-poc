@@ -2,6 +2,9 @@
 layout: layouts/base.njk
 title: Estimate acceleration — Agent Ready POC
 description: AI-drafted estimates from photos, voice notes, or partial specs. Multimodal capture, model drafts, estimator approves.
+service:
+  name: Estimate acceleration
+  framework: The Multimodal Draft Loop
 ---
 
 # Estimate acceleration

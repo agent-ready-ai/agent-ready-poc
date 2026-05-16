@@ -2,6 +2,9 @@
 layout: layouts/base.njk
 title: Field-tech copilot — Agent Ready POC
 description: Voice-first AI assistant for trades technicians. Hands-free manuals, job logging, callback scheduling, offline-capable.
+service:
+  name: Field-tech copilot
+  framework: Three-Modality Capture
 ---
 
 # Field-tech copilot

@@ -2,6 +2,9 @@
 layout: layouts/base.njk
 title: Dispatch automation — Agent Ready POC
 description: AI-assisted phone intake and scheduling for skilled-trades businesses. Confidence-routed handoff; humans review exceptions.
+service:
+  name: Dispatch automation
+  framework: Confidence-Routed Intake Pattern
 ---
 
 # Dispatch automation
