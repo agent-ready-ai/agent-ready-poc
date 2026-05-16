@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-// Runs Lighthouse 3x against a URL, reports the median score per category,
-// and writes the summary to lighthouse-reports/<slug>.json.
+// Runs Lighthouse against a URL across desktop and mobile form factors,
+// reporting the 3-run median for each. GOAL.md Gate 2 thresholds differ
+// per form factor (desktop ≥95 perf, mobile ≥90 perf), so both are tested.
+// JSON written to lighthouse-reports/<slug>.json.
 import lighthouse from "lighthouse";
 import * as chromeLauncher from "chrome-launcher";
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -12,47 +14,62 @@ if (!url) {
   process.exit(1);
 }
 
-// chrome-launcher 1.x doesn't add --headless by default; without it Chrome
-// tries to open a window and dies in the container.
 const flags = (
   process.env.CHROME_FLAGS ?? "--no-sandbox --disable-dev-shm-usage --disable-gpu"
 ).split(" ");
 if (!flags.some((f) => f.startsWith("--headless"))) flags.push("--headless=new");
+
+const desktopConfig = {
+  extends: "lighthouse:default",
+  settings: {
+    formFactor: "desktop",
+    screenEmulation: { disabled: true },
+    throttling: { rttMs: 40, throughputKbps: 10240, cpuSlowdownMultiplier: 1 },
+  },
+};
 
 const chrome = await chromeLauncher.launch({
   chromeFlags: flags,
   chromePath: process.env.CHROME_PATH,
 });
 
-const runs = [];
-try {
+async function runAll(config) {
+  const runs = [];
   for (let i = 0; i < 3; i++) {
-    const result = await lighthouse(url, { port: chrome.port, output: "json" });
-    runs.push(result.lhr);
+    const r = await lighthouse(url, { port: chrome.port, output: "json" }, config);
+    runs.push(r.lhr);
   }
+  return runs;
+}
+
+const median = (arr) => arr.slice().sort((a, b) => a - b)[Math.floor(arr.length / 2)];
+const summarize = (runs) => ({
+  performance: median(runs.map((r) => Math.round(r.categories.performance.score * 100))),
+  accessibility: median(runs.map((r) => Math.round(r.categories.accessibility.score * 100))),
+  bestPractices: median(runs.map((r) => Math.round(r.categories["best-practices"].score * 100))),
+  seo: median(runs.map((r) => Math.round(r.categories.seo.score * 100))),
+  cwv: {
+    lcp: Math.round(median(runs.map((r) => r.audits["largest-contentful-paint"].numericValue))),
+    cls: median(runs.map((r) => r.audits["cumulative-layout-shift"].numericValue)),
+    inp: median(runs.map((r) => r.audits["interaction-to-next-paint"]?.numericValue ?? 0)),
+  },
+});
+
+let result;
+try {
+  const mobileRuns = await runAll();
+  const desktopRuns = await runAll(desktopConfig);
+  result = {
+    url,
+    mobile: summarize(mobileRuns),
+    desktop: summarize(desktopRuns),
+  };
 } finally {
   await chrome.kill();
 }
 
-const median = (arr) => arr.slice().sort((a, b) => a - b)[Math.floor(arr.length / 2)];
-const score = (id) =>
-  median(runs.map((r) => Math.round((r.categories[id]?.score ?? 0) * 100)));
-
-const summary = {
-  url,
-  performance: score("performance"),
-  accessibility: score("accessibility"),
-  bestPractices: score("best-practices"),
-  seo: score("seo"),
-  cwv: {
-    lcp: median(runs.map((r) => r.audits["largest-contentful-paint"]?.numericValue ?? 0)),
-    cls: median(runs.map((r) => r.audits["cumulative-layout-shift"]?.numericValue ?? 0)),
-    inp: median(runs.map((r) => r.audits["interaction-to-next-paint"]?.numericValue ?? 0)),
-  },
-};
-
-console.log(JSON.stringify(summary, null, 2));
+console.log(JSON.stringify(result, null, 2));
 
 mkdirSync("lighthouse-reports", { recursive: true });
 const slug = url.replace(/https?:\/\//, "").replace(/[^\w.-]+/g, "_");
-writeFileSync(join("lighthouse-reports", `${slug}.json`), JSON.stringify(summary, null, 2));
+writeFileSync(join("lighthouse-reports", `${slug}.json`), JSON.stringify(result, null, 2));
