@@ -1,0 +1,16 @@
+# agent-ready-poc
+
+> Baseline placeholder for an AI advancement firm targeting skilled trades and local services. Real brand and content land at Checkpoint 4 of the project's build plan.
+
+## Pages
+
+- [Home](/index.html): iter-0 baseline placeholder page.
+
+## About
+
+This site is a proof-of-concept that an autonomous agent can ship a complete, modern, secure, accessible, agent-ready static site on Cloudflare end-to-end. The current state is intentionally minimal — measurements at this stage establish the baseline against which subsequent iterations are compared.
+
+## Optional
+
+- [Sitemap](/sitemap.xml)
+- [robots.txt](/robots.txt)
