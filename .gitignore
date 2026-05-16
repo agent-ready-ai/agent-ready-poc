@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.wrangler/
+.DS_Store
+lighthouse-reports/
+.claude/settings.local.json
+*.log
+
+# Loose token file (not committed; the spec assumes secrets live in .env)
+cf_api_token.txt

@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.gitleaks-cache
+.wrangler
+lighthouse-reports
+*.log
+.DS_Store
+Dockerfile
+docker-compose.yml
+.dockerignore

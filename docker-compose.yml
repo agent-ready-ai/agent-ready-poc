@@ -1,0 +1,24 @@
+services:
+  dev:
+    build: .
+    image: agent-ready-poc:dev
+    container_name: agent-ready-poc-dev
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - node_modules:/workspace/node_modules
+      - wrangler_state:/root/.wrangler
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - NODE_ENV=development
+      - CHROME_FLAGS=${CHROME_FLAGS:---no-sandbox --disable-dev-shm-usage --disable-gpu}
+    ports:
+      - "8080:8080"
+    mem_limit: 6g
+    cpus: 4
+    stdin_open: true
+    tty: true
+
+volumes:
+  node_modules:
+  wrangler_state:

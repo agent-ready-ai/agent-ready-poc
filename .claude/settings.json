@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "F=$(jq -r '.tool_input.file_path // empty' 2>/dev/null); [ -z \"$F\" ] && exit 0; docker compose ps --status=running --services 2>/dev/null | grep -q '^dev$' || exit 0; case \"$F\" in *.js|*.mjs|*.cjs|*.css|*.md|*.njk|*.json|*.yml|*.yaml) REL=$(echo \"$F\" | sed \"s|^$PWD/||\"); docker compose exec -T dev npx prettier --write \"$REL\" 2>&1 | head -20 || true ;; esac"
+          }
+        ]
+      }
+    ]
+  },
+  "skipAutoPermissionPrompt": true
+}
