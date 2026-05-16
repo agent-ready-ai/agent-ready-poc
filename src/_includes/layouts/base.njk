@@ -39,7 +39,35 @@
             {% if description %}"description": "{{ description }}",{% endif %}
             "isPartOf": { "@id": "{{ site.url }}/#website" },
             "inLanguage": "en"
-          }{% if faqs %},
+          }{% if page.url != "/" %},
+          {
+            "@type": "BreadcrumbList",
+            "@id": "{{ site.url }}{{ page.url }}#breadcrumb",
+            "itemListElement": [
+              {%- for crumb in page.url | breadcrumbs(site.url) %}
+              {
+                "@type": "ListItem",
+                "position": {{ crumb.position }},
+                "name": {{ crumb.name | dump | safe }},
+                "item": "{{ crumb.item }}"
+              }{% if not loop.last %},{% endif %}
+              {%- endfor %}
+            ]
+          }{% endif %}{% if service %},
+          {
+            "@type": "Service",
+            "@id": "{{ site.url }}{{ page.url }}#service",
+            "name": {{ service.name | dump | safe }},
+            {% if description %}"description": {{ description | dump | safe }},{% endif %}
+            "provider": { "@id": "{{ site.url }}/#organization" },
+            "serviceType": "AI implementation",
+            "areaServed": "United States"{% if service.framework %},
+            "additionalProperty": {
+              "@type": "PropertyValue",
+              "name": "Framework",
+              "value": {{ service.framework | dump | safe }}
+            }{% endif %}
+          }{% endif %}{% if faqs %},
           {
             "@type": "FAQPage",
             "@id": "{{ site.url }}{{ page.url }}#faq",

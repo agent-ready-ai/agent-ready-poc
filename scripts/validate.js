@@ -28,7 +28,9 @@ if (files.length === 0) {
 }
 
 let totalErrors = 0;
-for (const file of files) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+for (const [i, file] of files.entries()) {
+  if (i > 0) await sleep(2000); // throttle: W3C nu validator rate-limits
   const html = await readFile(file);
   const res = await fetch("https://validator.w3.org/nu/?out=json", {
     method: "POST",

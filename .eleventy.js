@@ -9,6 +9,29 @@ export default function (eleventyConfig) {
     typeof str === "string" && str.startsWith(prefix),
   );
 
+  // BreadcrumbList JSON-LD generator. Returns an array of
+  //   { position, name, item } from a page URL like "/services/dispatch-automation/",
+  // rooted at the site URL. Returns [] for the home page.
+  eleventyConfig.addNunjucksFilter("breadcrumbs", (url, siteUrl) => {
+    if (!url || url === "/") return [];
+    const parts = url.split("/").filter(Boolean);
+    const crumbs = [{ position: 1, name: "Home", item: siteUrl + "/" }];
+    let path = "";
+    for (const part of parts) {
+      path += "/" + part;
+      const name = part
+        .split("-")
+        .map((w) => w[0].toUpperCase() + w.slice(1))
+        .join(" ");
+      crumbs.push({
+        position: crumbs.length + 1,
+        name,
+        item: siteUrl + path + "/",
+      });
+    }
+    return crumbs;
+  });
+
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
 
   // Files that Cloudflare Pages expects at the deploy root.
