@@ -1,0 +1,20 @@
+/* Baseline CSS. Minimum to clear WCAG 2.5.8 (Target Size, AA) on link
+ * elements that would otherwise render at the browser default ~17px height.
+ * Content/visual styling lands in a later iteration. */
+
+nav a,
+.skip-link {
+  display: inline-block;
+  padding: 6px 8px;
+}
+
+/* Skip link visible only when focused — standard pattern. */
+.skip-link {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
