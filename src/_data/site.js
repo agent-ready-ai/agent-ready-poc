@@ -21,6 +21,13 @@ export default {
   // Build credit lives in the JSON-LD Organization description and the README.
   builtBy: "Claude (Anthropic) via Claude Code, directed by one operator over a single build session",
   email: "founder@agentreadypoc.com",
+  // Turnstile site key set at Checkpoint 2 by the operator (public; commit safe).
+  // The corresponding TURNSTILE_SECRET_KEY lives only in the Pages env, never in the repo.
+  turnstileSiteKey: null,
+  // Web Analytics beacon token set after Gate 1 passes (Checkpoint 5+).
+  analytics: {
+    beaconToken: null,
+  },
   hours: "Monday–Friday, 9–5 US Eastern (project communication; the site itself is async).",
   github: null, // set at Checkpoint 7 after publication
 };

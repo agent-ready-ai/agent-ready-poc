@@ -18,3 +18,12 @@ nav a,
 .skip-link:focus {
   transform: translateY(0);
 }
+
+/* Honeypot — off-screen but available to bots that submit every field. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
