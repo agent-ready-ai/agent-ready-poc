@@ -11,6 +11,37 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
     <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "{{ site.url }}/#organization",
+            "name": "{{ site.name }}",
+            "url": "{{ site.url }}",
+            "description": "{{ site.description }}"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "{{ site.url }}/#website",
+            "url": "{{ site.url }}",
+            "name": "{{ site.name }}",
+            "publisher": { "@id": "{{ site.url }}/#organization" },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "{{ site.url }}{{ page.url }}",
+            "url": "{{ site.url }}{{ page.url }}",
+            "name": "{{ title or site.name }}",
+            {% if description %}"description": "{{ description }}",{% endif %}
+            "isPartOf": { "@id": "{{ site.url }}/#website" },
+            "inLanguage": "en"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
