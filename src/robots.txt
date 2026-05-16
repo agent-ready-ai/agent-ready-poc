@@ -40,4 +40,4 @@ Allow: /
 User-agent: OAI-SearchBot
 Allow: /
 
-Sitemap: https://agent-ready-poc.pages.dev/sitemap.xml
+Sitemap: https://agentreadypoc.com/sitemap.xml

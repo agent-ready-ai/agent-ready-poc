@@ -1,0 +1,209 @@
+# Agent Ready POC — Full Content
+
+This file concatenates every public page on agentreadypoc.com for agents that prefer single-fetch ingestion over crawling. Page boundaries are marked with `---PAGE BREAK---` separators. Source markdown is also fetchable per-page at the corresponding HTML URL.
+
+---PAGE BREAK---
+
+## Home — Agent Ready POC: the proof-of-concept that built itself
+
+URL: https://agentreadypoc.com/
+
+Every file on this site was authored by an autonomous agent under direction from a single human operator. The site is modern, secure, accessible (WCAG 2.1 AA), and agent-ready by every published criterion. It models what an AI-advancement firm would ship for a skilled-trades client.
+
+A single agent — Claude, running inside Claude Code — was handed a 37 KB mission brief (GOAL.md) and a host with only Docker installed. With minimal human intervention it: scaffolded the build environment in Docker, authored the 11ty static site, configured Cloudflare Pages, ran three independent quality gates against the live deployment, fixed regressions, and tagged each iteration's progress.
+
+The point is not that the site is fancy. The point is that nothing in the workflow required a human to write code, configure infrastructure, or hand-tune metrics. The operator's role was approvals at checkpoints the build plan deliberately reserved for human judgment.
+
+The same agent stack applied to a real services business produces three concrete deliverables: dispatch automation, estimate acceleration, field-tech copilot. Their structure is on this site; the iteration log records exactly how each was specified.
+
+Target audience: operators in skilled trades and local services — plumbing, electrical, HVAC, roofing, pool service, real estate, title, home inspection, general contracting — who feel the gap between AI possibility and vendor reality, who want a complete agent-built artifact to see before agreeing to one, and who have specific bottlenecks where measurable improvement matters more than glossy strategy decks.
+
+Industry context: demand for skilled-trades labor is forecast to outpace replacement through 2032 (BLS Occupational Outlook Handbook). Small businesses in trades adopt new tooling slower than national SMB averages but invest more per-rollout when they do (U.S. Chamber of Commerce, Empowering Small Business). The bottleneck on SMB AI adoption is not interest; it is the shortage of implementation partners who ship to production rather than to pilot (Goldman Sachs, Small Businesses and AI 2024).
+
+---PAGE BREAK---
+
+## About this project
+
+URL: https://agentreadypoc.com/about/
+
+Agent Ready POC is a proof that a single autonomous agent can ship a complete, modern, secure, accessible, agent-ready static site on Cloudflare end-to-end, with a human operator's role limited to checkpoint approvals.
+
+The brand is openly the build process. There is no fictional founder, no manufactured consultancy. The "firm" is the agent and the operator. The services this site describes are concrete patterns we would build for a real client — supported by real industry data, scaffolded with the same techniques used to build the site itself.
+
+A site is agent-ready when an AI agent (an LLM acting as a user, a research assistant, an indexing crawler, a procurement assistant) can: discover the site (robots.txt, sitemap.xml, llms.txt, Link response headers); read it cleanly (semantic HTML5, JSON-LD entity graph with connected @id cross-references, low render cost); trust the access rules (non-blanket bot policies, content-signals header, robots.txt mirroring intent).
+
+Tooling: Docker (only host install), 11ty (static site generator), Cloudflare Pages (hosting + Pages Functions), Cloudflare Registrar (domain), Lighthouse + axe-core + W3C nu validator + gitleaks (verification gates). Authoring agent: Claude (Anthropic), running inside Claude Code. Operator role: checkpoint approvals only — no code editing.
+
+Quality posture: Gate 2 Lighthouse + axe + W3C all score 100/100 on both desktop and mobile across every page; 0 axe violations; 0 W3C errors. Gate 1 (Cloudflare Agent Ready scan) green across categories. Gate 3 (content audit) per Plate Lunch Collective's published research on AI-surface content optimization.
+
+What this is not: a real consultancy taking inbound work; a fabricated case study generator; a claim that agents replace operators. The build plan deliberately reserved eight checkpoints for human judgment — none were automated away.
+
+---PAGE BREAK---
+
+## Services — three patterns for skilled-trades AI
+
+URL: https://agentreadypoc.com/services/
+
+Three deliverables an Agent-Ready-POC-style firm would ship for a real skilled-trades client. Each is fixed-scope, fixed-fee, 4–8 weeks, with a production handoff. The patterns are described against real industry data; the build mechanics are the same ones that produced this site.
+
+**Dispatch automation:** Phone-and-web intake → confidence-scored AI routing → human review only on exceptions. The dispatcher stops re-keying every call.
+
+**Estimate acceleration:** Multimodal capture (photo, voice, free text, partial CAD) → model drafts a structured estimate against your price history → estimator approves or adjusts.
+
+**Field-tech copilot:** Voice-first AI assistant for the truck cab. Pull manuals, log notes, schedule callbacks, capture before/after photos — without typing on a phone in the rain. Offline-capable.
+
+All three share a single architectural commitment: confidence-scored AI handles the routine, a human handles the exceptions, every transition is logged. That same commitment shaped this site: routine scaffolding stayed in the agent loop, brand selection and Turnstile setup routed to the operator, every step is tagged in the git history.
+
+---PAGE BREAK---
+
+## Dispatch automation — Confidence-Routed Intake Pattern
+
+URL: https://agentreadypoc.com/services/dispatch-automation/
+
+TL;DR: The pattern is phone-and-web intake → confidence-scored AI routing → human review only on exceptions. The dispatcher is freed from re-keying every call and instead spends their time on calls the AI cannot confidently handle alone.
+
+Skilled-trades businesses live or die on response time. A 2024 industry analysis of residential service businesses found the gap between call receipt and dispatched technician is the single most-cited operational pain point named by owner-operators in the 5–50 employee band (ServiceTitan State of the Trades reports). The U.S. BLS Occupational Outlook Handbook projects employment of plumbers, pipefitters, and steamfitters to grow 6% from 2022 to 2032 — faster than labor force replacement of retiring practitioners — which means existing dispatchers absorb more calls, not fewer.
+
+The bottleneck is not the dispatcher's skill. It is the volume of routine information re-keyed on every call: address, equipment, service history, technician availability, parts on truck. Each call carries 3–5 minutes of mechanical data capture the caller already gave them.
+
+The Confidence-Routed Intake Pattern is built in four stages with measurable handoffs and defined human-override paths: (1) Capture — voice/text AI front-end with constrained schema, real-time validation against address book and equipment catalog. (2) Classify — captured intake classified by job type and urgency against historical data, confidence scores per field, low-confidence routes to dispatcher's exception queue. (3) Schedule — high-confidence routine jobs write back to FSM (ServiceTitan, Housecall Pro, Jobber, Workiz, FieldEdge) with technician, time window, SKU pack. (4) Review — dispatcher's queue contains only exceptions, prioritized by urgency and customer history.
+
+The pattern is the same one that built this site: stage-by-stage with explicit confidence thresholds, human reserved for what the model cannot yet handle. Each stage is independently testable, monitorable, reversible.
+
+You keep: the intake automation in your environment (Pages Functions, Workers, or your existing FSM's automation layer); runbooks for the exception queue; an evaluation harness — the same one we ran on this site's lighthouse audits.
+
+We measure: routine intake handled without human touch (target ≥70% by week 4); customer-side errors per 100 intakes (target <2); dispatcher exception-queue throughput against pre-build baseline.
+
+The U.S. Chamber of Commerce's Empowering Small Business report identifies workflow automation as the top-ranked anticipated AI use case among small business owners. Goldman Sachs' 2024 SMB AI survey found small businesses who shipped at least one AI workflow into production reported higher overall technology satisfaction than those still in pilot phases. Both findings support the Confidence-Routed Intake pattern: ship a narrow, measurable workflow before generalizing.
+
+---PAGE BREAK---
+
+## Estimate acceleration — The Multimodal Draft Loop
+
+URL: https://agentreadypoc.com/services/estimate-acceleration/
+
+TL;DR: Multimodal capture (photo, voice, free text, partial CAD) → model drafts a structured estimate against your price history → estimator approves or adjusts. Senior estimator stops grinding line items and starts negotiating jobs.
+
+Estimating is the single most expensive activity in custom-quoted trades work. A roofing contractor running 30–50 estimates a week spends senior estimator time on the parts the model can do — line-item lookups, historical pricing reconciliation, scope-of-work language — rather than on the parts only humans can do (being on site, reading the customer).
+
+The U.S. Chamber of Commerce reports SMB tech investment is concentrated on back-of-house automation. Intuit's Small Business Insights tracks revenue lost specifically to slow quote turnaround. The BLS projects construction and extraction occupations to grow about 4% from 2022 to 2032 — well below the customer-facing demand growth NFIB's optimism index identifies as the gating constraint on shop expansion. Estimating throughput, not labor availability, is the leverage point.
+
+The Multimodal Draft Loop is a three-component build: (1) Multimodal capture — photos, voice memos, free text, partial CAD/PDF takeoffs; agent extracts structured features and reconciles against equipment catalog and job-history database. (2) Historical price draft — model drafts line items against past jobs (not synthetic price tables); two jobs with same scope-of-work in your historical data are the strongest predictor of pricing; confidence scores per line item flag where the model is interpolating outside the comfortable distribution. (3) Approval UI with full audit trail — estimator reviews in structured UI, every model suggestion and human override logged; the audit trail is eval data for the next iteration.
+
+McKinsey's AI adoption surveys identify estimation and quotation as the most-cited AI use case in SMB construction and skilled-services. The pattern's value scales with two factors — size of historical pricing corpus, and granularity of line-item taxonomy — both of which grow with use without requiring up-front data engineering.
+
+You keep: the workflow integrated with your existing CRM/FSM/quoting tool; the price-history corpus (yours, not ours); a complete audit log.
+
+We measure: time per estimate (target ≥50% reduction by week 6); variance between draft and final-quoted price (target <8% on routine line items); win-rate change at constant pricing (tracked, not used as build acceptance).
+
+---PAGE BREAK---
+
+## Field-tech copilot — Three-Modality Capture
+
+URL: https://agentreadypoc.com/services/field-tech-copilot/
+
+TL;DR: A voice-first assistant in the truck cab. Pull manuals, log job notes, schedule callbacks, capture before/after photos — without typing on a phone in the rain. Offline-capable; syncs when service returns.
+
+Field technicians lose time at one point: data capture. Job notes get logged hours late or not at all. Equipment manuals get looked up on the customer's couch with the homeowner watching. Callback scheduling defaults to "I'll text dispatch when I get back to the truck," and that text is forgotten by the third call.
+
+The U.S. Chamber of Commerce identifies mobile-first workforce tools as the second-most-cited near-term tech investment among small businesses in service trades. The bottleneck is rarely the technology stack — most FSMs already offer mobile apps. The bottleneck is interaction modality. Typing on a phone with greasy hands, in cold weather, or under a sink, fails as an input method.
+
+NFIB's Small Business Economic Trends reports labor retention is consistently a top-three reported challenge among small service businesses. Senior technicians who feel back-office tooling adds work — rather than removing it — leave at higher rates. The cost of a missed job-note is not the missed note; it is the senior tech who quits because their tooling fights them.
+
+Three-Modality Capture uses three input modalities in combination with an offline-first sync layer: (1) Voice — primary modality; tech speaks job notes during or between work; model structures speech into FSM fields with confidence scoring; works hands-free, with gloves, in poor lighting, through a respirator. (2) Camera — strongest for nameplates, model numbers, panel labels, before/after states; model extracts model numbers and matches against equipment library. (3) Position and context — GPS, time of day, current job, customer history auto-populate fields; "schedule a callback near here next Tuesday" works without the tech specifying the location.
+
+Offline-first sync layer: service drops in basements, steel-framed buildings, rural areas. Copilot operates fully offline against a local model and cached customer database, syncs on schedule. McKinsey's AI adoption surveys note offline capability is a determining factor for AI adoption in field-service.
+
+ServiceTitan's industry reports identify field-data capture quality as the highest-leverage workflow improvement for 5–50 technician residential service businesses. The pattern's value compounds with use: every successful capture is training data for the next.
+
+---PAGE BREAK---
+
+## Case studies — the build iteration log
+
+URL: https://agentreadypoc.com/case-studies/
+
+The case study is this site. Every iteration is annotated-tagged in git with gate scores. iter-0-baseline → iter-1-defaults → iter-2-structure → iter-3-content.
+
+iter-0-baseline: placeholder index, no _headers, no JSON-LD. Free wins from Cloudflare: HTTPS, HTTP/3, referrer-policy, x-content-type-options, ACAO *. Lighthouse 100/94/100/92; axe 0; W3C 0.
+
+iter-1-defaults: added _headers (CSP, HSTS, Permissions-Policy, content-signals); robots.txt (non-blanket AI bot rules); llms.txt; sitemap.xml; JSON-LD entity graph stub; CSS touch-target fix for WCAG 2.5.8. Lighthouse 100/100/100/100; Gate 2 green at ceiling.
+
+iter-2-structure: 11 crawlable pages + 404; nav partial with aria-current; FAQPage schema; addNunjucksFilter("startswith"); harness updated for desktop+mobile. All pages 100/100/100/100 on both form factors.
+
+iter-3-content: Option B brand (Agent Ready POC, meta); real content with verifiable citations on home, about, three service detail pages, case studies, how-we-engage, FAQ, contact. Custom domain agentreadypoc.com attached.
+
+The iteration log proves three things: (1) the agent can ship structural and quality bar without human authoring; (2) brand and content decisions remain a checkpoint — no autonomous brand fabrication; (3) the verification harness scales — pages 1 → 12 with no script rewrites.
+
+---PAGE BREAK---
+
+## How we engage — the methodology
+
+URL: https://agentreadypoc.com/how-we-engage/
+
+Build methodology: eight-checkpoint plan. Agent works autonomously between checkpoints; operator approves at each one. Same shape applies to a real client engagement: agent does the volume of work, operator owns decisions.
+
+Checkpoint pattern: (1) Prereqs — environment ready, credentials scoped, host tooling minimal. (2) Domain/identity — operator-purchased; agent provides shortlist with rationale. (3) Account-level surfaces — Turnstile site, API tokens, account-scoped resources. Operator clicks; agent records keys. (4) Build environment — Docker stack, gate scripts, baseline measurement deployed. (5) Direction/brand — operator picks among agent-presented options. No fabrication. (6) Iterations — agent ships against gates, tags every iteration. Operator approves before promoting. (7) Publication/production handoff — agent prepares documentation, license, changelog; operator authorizes push. (8) Final report — agent delivers structured summary; operator owns external communications.
+
+Build cadence: every iteration annotated-tagged in git with metric deltas. Independently revertable. Verification Loop after each deploy: scan, lighthouse, validate, a11y, audit score, log artifact, tag. If a gate regresses, revert to previous green tag before re-attempting.
+
+Operator does: approves at eight checkpoints; owns external actions agent legitimately cannot take (domain purchase, account dashboard work, GitHub push); overrides on judgment (brand, scope-boundary); does not edit code unless they want to.
+
+Agent does: authors files, scaffolds build, configures verification, runs gates, fixes regressions, tags iterations; surfaces decisions needing a human (with recommendation); stops at checkpoint boundaries until resumed; maintains iteration log.
+
+Applied to a real engagement: 4–8 week fixed-scope, fixed-fee. Week 1 diagnose (shadow workflow). Week 2 scope (signed scope with explicit done criteria, gate metrics, fixed delivery). Weeks 3–6 build (daily commits, weekly tagged iterations, weekly check-in). Weeks 7–8 handoff (production deploy, runbooks, eval harness, monitoring, training, 30-day post-launch checkpoint).
+
+---PAGE BREAK---
+
+## FAQ — twelve questions
+
+URL: https://agentreadypoc.com/faq/
+
+Q: What is this site, exactly?
+A: Proof-of-concept that an autonomous AI agent — Claude inside Claude Code — can ship a complete agent-ready static site end-to-end on Cloudflare, with the operator's role limited to eight-checkpoint approval.
+
+Q: How long did the build take?
+A: Iteration log in git tags has exact wall-clock per iteration. First deploy went live same day as prereqs check.
+
+Q: What did the operator actually do?
+A: Eight things, none coding. Approved domain shortlist, purchased domain on Cloudflare Registrar, set up Turnstile site, picked brand direction, pasted Turnstile secret into Pages env, ran manual Gate 1 scanner, approved publication, pushed to GitHub. Everything else was the agent.
+
+Q: Is this site a real business?
+A: No. The firm is openly the build process. Service pages describe what we would build for a real client. No active engagement pipeline.
+
+Q: What does "agent-ready" mean?
+A: A site an AI agent can discover (robots.txt, sitemap.xml, llms.txt, Link headers), read (semantic HTML5, JSON-LD @id graph), and respect access rules of (non-blanket bot rules, content-signals).
+
+Q: Why these three services?
+A: Highest-leverage workflows in 5–50 employee skilled-trades businesses where the owner is still operationally involved. All share the same architecture as this site.
+
+Q: What was hardest?
+A: Reconciling spec inconsistencies. wrangler 4.x dropped Node 20; CF_API_TOKEN deprecated; "125-point Plate Lunch audit" in GOAL.md doesn't literally exist in source article. Each flagged, resolved with operator approval, spec updated in lockstep.
+
+Q: What didn't work first try?
+A: Three fix/ branches in git: wrangler/Node 20 conflict (bumped to Node 22); chrome-launcher 1.x default flags (added --headless=new); @axe-core/cli needs chromedriver (swapped to @axe-core/puppeteer).
+
+Q: Is the code open source?
+A: Yes. Published at GitHub at Checkpoint 7. Spec + Docker stack + scripts + every iteration commit.
+
+Q: Could this methodology run for my real business?
+A: Yes. See how-we-engage. Diagnostic call free. Fixed-scope, fixed-fee, 4–8 weeks.
+
+Q: How much does an engagement cost?
+A: Depends on FSM/CRM integration depth, historical data corpus, number of workflows in scope. Not on public site; depends on diagnostic conversation.
+
+Q: What gates pass?
+A: Gate 1 green; Gate 2 Lighthouse 100/100/100/100 desktop and mobile across all pages, axe 0, W3C 0; Gate 3 service pages have 5–6 verifiable citations each, original named framework, FAQPage schema.
+
+---PAGE BREAK---
+
+## Contact
+
+URL: https://agentreadypoc.com/contact/
+
+This project is a proof-of-concept, not an active consultancy. Inbound about the methodology — applying the same agent-driven build pattern to a real business — is welcome. Inbound about the proof-of-concept itself (questions, corrections, references to comparable work) is also welcome.
+
+Email: founder@agentreadypoc.com (Cloudflare Email Routing → operator inbox). Same-business-day reply Mon–Fri US Eastern.
+
+Form: Turnstile-protected form lands at Checkpoint 5 of the build plan. Until then, email is the only inbound channel.
+
+Source: full repository at GitHub (link lands at Checkpoint 7). Repository will include spec (CLAUDE.md, GOAL.md), build (Dockerfile, docker-compose.yml, Makefile, .eleventy.js, verification scripts), site (every page, every _headers rule, every JSON-LD graph entry), history (every commit, every iteration tag, every fix branch — un-rewritten).

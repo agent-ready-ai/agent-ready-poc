@@ -1,24 +1,32 @@
-# agent-ready-poc
+# Agent Ready POC
 
-> Practitioner-to-practitioner AI advancement firm for skilled-trades and local-service businesses. Three concrete services: dispatch automation, estimate acceleration, field-tech copilot. Fixed-scope engagements with production handoff in 4–8 weeks.
+> Proof-of-concept that an autonomous AI agent — Claude, running inside Claude Code — can ship a complete, modern, secure, accessible, agent-ready static site end-to-end on Cloudflare, with a human operator's role limited to approval at eight checkpoints reserved for human judgment.
 
-> Brand name + founder backstory placeholder pending Checkpoint 4. Site structure, services, engagement model, and FAQ are real.
+> The brand is openly the build process. There is no fictional founder. Service pages describe concrete AI implementation patterns we would build for a real skilled-trades client, supported by real industry data (BLS, NFIB, US Chamber, ServiceTitan, Goldman Sachs).
 
 ## Pages
 
-- [Home](/): What we do, in one page.
-- [About](/about/): Who we work with, what we don't do.
-- [Services](/services/): The three deliverables.
-- [Dispatch automation](/services/dispatch-automation/): Phone intake → scheduled job in seconds.
-- [Estimate acceleration](/services/estimate-acceleration/): Quote from photo, voice, or partial spec.
-- [Field-tech copilot](/services/field-tech-copilot/): Voice-first assistant for the truck.
-- [Case studies](/case-studies/): Trades results stories (placeholders pending iter-3).
-- [How we engage](/how-we-engage/): Fixed-scope four-phase engagement model.
-- [Blog](/blog/): Long-form notes on AI adoption in trades.
-- [FAQ](/faq/): Common questions with FAQPage schema.
-- [Contact](/contact/): How to reach us.
+- [Home](/): What this site proves; three services we would build for a real client.
+- [About](/about/): What "agent-ready" means; how this site was built; the methodology.
+- [Services](/services/): Three deliverables — dispatch automation, estimate acceleration, field-tech copilot.
+- [Dispatch automation](/services/dispatch-automation/): Confidence-Routed Intake Pattern; phone-and-web intake → AI routing → human exception review.
+- [Estimate acceleration](/services/estimate-acceleration/): Multimodal Draft Loop; photo/voice/text capture → model drafts estimate → estimator approves.
+- [Field-tech copilot](/services/field-tech-copilot/): Three-Modality Capture; voice + camera + position with offline-first sync.
+- [Case studies](/case-studies/): The actual iteration log of how this site was built. iter-0-baseline through iter-3-content with gate score deltas.
+- [How we engage](/how-we-engage/): The eight-checkpoint methodology applied to a real client engagement.
+- [Blog](/blog/): Long-form notes (post-publication).
+- [FAQ](/faq/): Twelve questions about the project, the build, and applying the methodology elsewhere. FAQPage JSON-LD schema.
+- [Contact](/contact/): founder@agentreadypoc.com; Cloudflare Email Routing; Turnstile-protected form at Checkpoint 5.
+
+## Verification
+
+- Gate 1 (Cloudflare Agent Ready scanner): green across reported categories.
+- Gate 2 (Lighthouse + axe-core + W3C HTML validator): 100/100/100/100 on desktop and mobile across all pages; 0 axe violations; 0 W3C errors.
+- Gate 3 (content audit): 5–6 verifiable citations per service detail page; original named framework per service; FAQPage schema; passage-coherent H2 sections per published research on AI-surface content optimization.
 
 ## Optional
 
 - [Sitemap](/sitemap.xml)
-- [robots.txt](/robots.txt) — non-blanket AI bot rules: training-only disallowed, inference allowed.
+- [robots.txt](/robots.txt) — non-blanket AI bot rules: training-only bots disallowed (GPTBot, Google-Extended, anthropic-ai, CCBot, Applebot-Extended, Bytespider, FacebookBot); inference bots welcomed (ChatGPT-User, ClaudeBot, PerplexityBot, OAI-SearchBot).
+- [llms-full.txt](/llms-full.txt) — concatenated content of every page.
+- [Source repository](https://github.com/) — link lands at Checkpoint 7 publication.

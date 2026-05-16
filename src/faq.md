@@ -1,32 +1,32 @@
 ---
 layout: layouts/base.njk
-title: FAQ — {{ site.name }}
-description: Common questions about AI implementation for trades and local-service businesses.
+title: FAQ — Agent Ready POC
+description: Common questions about how this site was built, what it proves, and how the methodology applies to a real engagement.
 faqs:
-  - q: What does an engagement actually look like?
-    a: Fixed scope, fixed fee, 4–8 weeks, with a production handoff at the end. We shadow your workflow in week 1, agree scope in week 2, build through week 6, hand off in weeks 7–8. No open-ended retainers.
-  - q: How much does this cost?
-    a: Pricing varies by engagement scope. Specifics land at iter-3 after brand selection (Checkpoint 4 of the build plan).
-  - q: Do we own what you build?
-    a: Yes. Code, eval sets, documentation, and the data corpus all live in your environment. We hand off keys and walk.
-  - q: What if AI gets the wrong answer?
-    a: Every workflow we build has an exception queue. Confidence-scored output, with the AI handling routine cases and routing the rest to your team. No "fully autonomous" deployments on day one.
-  - q: Do you work with multi-location businesses?
-    a: Yes. Up to 50 employees is where we focus; above that, the integration work shifts and we'll be honest about whether we're the right fit.
-  - q: Will this replace any of my people?
-    a: No. The goal is removing the grinding parts of their jobs — re-keying intake, looking up part numbers, drafting estimates — so your team handles more volume with the same headcount.
-  - q: Which FSMs / CRMs do you integrate with?
-    a: ServiceTitan, Housecall Pro, Jobber, Workiz, FieldEdge cover most of what we see. If you're on something else, integration scoping happens in week 1.
-  - q: How do you handle our customer data?
-    a: It stays in your infrastructure unless you explicitly authorize otherwise. We sign NDAs, document data flows, and the eval data is anonymized.
-  - q: What does "production handoff" mean concretely?
-    a: Runbooks for routine ops, eval suite for regression testing, monitoring dashboards, documentation of every model choice, and a 30-day post-launch checkpoint.
-  - q: What if our problem isn't on your services page?
-    a: The three services cover ~80% of what's actually shippable in 4–8 weeks for SMBs in trades. If your problem is different, we'll tell you whether we're the right fit on the diagnostic call, not after taking a check.
-  - q: Are you actively hiring?
-    a: Not at the iter-2 stage of this site. Updates land here when that changes.
-  - q: Do you do speaking / advisory work?
-    a: Limited bandwidth; see /contact for inbound.
+  - q: "What is this site, exactly?"
+    a: "A proof-of-concept that an autonomous AI agent — Claude, running inside Claude Code — can ship a complete, modern, secure, accessible, agent-ready static website end-to-end on Cloudflare, with a human operator's role limited to approval at the eight checkpoints reserved for human judgment."
+  - q: "How long did the build take?"
+    a: "The iteration log in git tags the exact wall-clock time per iteration. The first deploy went live on the same day the prereqs check completed. The detailed timing is in the case-studies page and the git history."
+  - q: "What did the operator actually do?"
+    a: "Eight things, none of them coding. Approved domain shortlist, purchased the domain on Cloudflare Registrar, set up the Turnstile site, picked the brand direction (Option B — meta), pasted the Turnstile secret into the Pages env at the dashboard configuration step, ran the manual Gate 1 scanner check, approved publication, and pushed to GitHub. Everything else — scaffolding, content, gate scripts, fix branches, merges, tags — was the agent."
+  - q: "Is this site a real business?"
+    a: "No. The 'firm' is openly the build process. The services pages describe patterns we would build for a real client, supported by real industry data, but there is no active engagement pipeline. The contact email forwards to the operator for inquiries about the project itself."
+  - q: "What does 'agent-ready' mean here?"
+    a: "A site is agent-ready when an AI agent can discover, read, and respect the access rules of the site without human intervention. Concretely — robots.txt plus sitemap.xml plus llms.txt plus Link headers for discovery; semantic HTML5 plus JSON-LD entity graph for reading; non-blanket bot rules plus content-signals header for access policy."
+  - q: "Why these three services?"
+    a: "They are the highest-leverage workflows we see in 5–50 employee skilled-trades businesses where the owner is still operationally involved. All three share the same architectural commitment — confidence-scored AI handles the routine, human handles the exceptions, every transition is logged — which is also the commitment this site itself was built with."
+  - q: "What was hardest about building this?"
+    a: "Reconciling spec inconsistencies that emerged from the spec author writing GOAL.md against tooling that has since changed. wrangler 4.x dropped Node 20 support; CF_API_TOKEN was deprecated in favor of CLOUDFLARE_API_TOKEN; the Plate Lunch 125-point audit framework cited in GOAL.md doesn't literally exist in the source article (it's an adaptation). The agent flagged each, proposed a resolution, the operator approved, the spec was updated in lockstep with the build."
+  - q: "What didn't work on the first try?"
+    a: "Three things, all logged in the git history under fix/ branches. First — wrangler 4.x refused to run on Node 20 because the published Node engine requirement changed mid-build; bumped Dockerfile to Node 22. Second — chrome-launcher 1.x doesn't include --headless in its defaultFlags, so the lighthouse harness's first run hit ECONNREFUSED; added --headless=new. Third — @axe-core/cli needs chromedriver, which isn't in the Debian Chromium package; swapped to @axe-core/puppeteer which talks to Chrome over CDP directly."
+  - q: "Is the code open source?"
+    a: "Yes. Published at GitHub at Checkpoint 7. The repository includes everything — the spec (CLAUDE.md plus GOAL.md), the Docker stack, the build scripts, the verification harness, and every iteration's commit history. The full link will land in the README and on the contact page after publication."
+  - q: "Could this methodology run for my real business?"
+    a: "Yes. The methodology is described in detail on the How we engage page. The diagnostic call is free; the engagement is fixed-scope, fixed-fee, 4–8 weeks. The contact page has the inbound channel."
+  - q: "How much does an engagement cost?"
+    a: "Engagement pricing depends on three factors — existing FSM/CRM integration depth, the size of the historical data corpus, and the number of distinct workflows in scope. Specific pricing is intentionally not on the public site because it depends on the diagnostic conversation. We will tell you on the diagnostic call whether we are the right fit, and what the engagement would cost, before you sign anything."
+  - q: "What gates does this site actually pass?"
+    a: "Gate 1 (Cloudflare Agent Ready scanner) — all green categories. Gate 2 (Lighthouse plus accessibility plus security) — Performance, Accessibility, Best Practices, SEO at 100/100 on both desktop and mobile across all pages; axe-core reports zero violations; W3C HTML reports zero errors; HSTS, CSP, X-Frame-Options, Permissions-Policy, COOP, Referrer-Policy, content-signals all set. Gate 3 (content audit) — service detail pages carry 5–6 verifiable citations each, original named frameworks, structured for retrieval per published research on content optimization for AI surfaces."
 ---
 
 # FAQ
