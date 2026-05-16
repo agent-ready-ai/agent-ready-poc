@@ -18,7 +18,37 @@ Forwarded via Cloudflare Email Routing to the operator's actual inbox. Expect a 
 
 ## Form
 
-A Turnstile-protected contact form lands at Checkpoint 5 of the build plan (after Pages env vars are configured and the Turnstile secret key is in place). Until then, email is the only inbound channel.
+{% if site.turnstileSiteKey %}
+<form id="contact-form" action="/api/contact" method="POST">
+  <p>
+    <label for="contact-name">Your name <span aria-hidden="true">*</span></label>
+    <input id="contact-name" name="name" type="text" required autocomplete="name" />
+  </p>
+  <p>
+    <label for="contact-email">Email <span aria-hidden="true">*</span></label>
+    <input id="contact-email" name="email" type="email" required autocomplete="email" />
+  </p>
+  <p>
+    <label for="contact-message">Message <span aria-hidden="true">*</span></label>
+    <textarea id="contact-message" name="message" required rows="6"></textarea>
+  </p>
+  <p class="honeypot" aria-hidden="true">
+    <label for="contact-website">Website (leave blank)</label>
+    <input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </p>
+  <div class="cf-turnstile" data-sitekey="{{ site.turnstileSiteKey }}"></div>
+  <p>
+    <button type="submit">Send</button>
+  </p>
+  <div id="contact-status" role="status" aria-live="polite"></div>
+</form>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="/assets/js/contact.js" defer></script>
+{% else %}
+A Turnstile-protected form lands at Checkpoint 5 of the build plan, once the Turnstile site is created (Checkpoint 2) and the secret key is pasted into the Pages environment variables. The site key will land in `src/_data/site.js`, the secret stays in Pages env, and this section will render the form.
+
+Until then, email is the only inbound channel.
+{% endif %}
 
 ## Source
 
