@@ -1,0 +1,19 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://agentreadypoc.com",
+      "service-desc": [
+        {
+          "href": "https://agentreadypoc.com/openapi.json",
+          "type": "application/vnd.oai.openapi+json;version=3.0"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://agentreadypoc.com/api/agent-info",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

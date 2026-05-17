@@ -40,6 +40,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/robots.txt": "robots.txt" });
   eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });
   eleventyConfig.addPassthroughCopy({ "src/llms-full.txt": "llms-full.txt" });
+  eleventyConfig.addPassthroughCopy({ "src/openapi.json": "openapi.json" });
+  eleventyConfig.addPassthroughCopy({ "src/well-known": ".well-known" });
 
   return {
     dir: {
