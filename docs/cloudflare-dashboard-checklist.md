@@ -21,6 +21,8 @@ Path: **Pages → agent-ready-poc → Settings**
   - `NODE_VERSION` = `22`
   - `TURNSTILE_SECRET_KEY` = `<paste your Turnstile secret here>` (from Checkpoint 2)
 
+> `TURNSTILE_SECRET_KEY` was rotated on 2026-05-17 as part of the post-launch security cleanup. Track future rotations in this file.
+
 (Until GitHub is connected, deploys happen via `make deploy` and these settings don't apply. After Checkpoint 7, the Git-driven builds use them.)
 
 ---
@@ -109,7 +111,18 @@ Without both keys, the contact form at `/contact/` stays info-only. The Pages Fu
 
 ---
 
-## 9. After all of the above is done — verify
+## 9. Security ongoing
+
+Recurring hygiene that isn't a one-time toggle. Revisit on every iteration / quarterly.
+
+- ☐ Verify **GitHub org 2FA is enforced** for `johnson-cloud-ai` at <https://github.com/organizations/johnson-cloud-ai/settings/security> (or the personal-account equivalent). Push access to this repo can deploy to Pages once Git-driven builds are connected; protect it.
+- ☐ **Calendar reminder** for `CLOUDFLARE_API_TOKEN` expiration. Current token expiration is visible at <https://dash.cloudflare.com/profile/api-tokens>. Set a reminder ~14 days before expiry to rotate cleanly.
+- ☐ **WAF rate-limit rule** on `/api/contact` and `/mcp`: Security → WAF → Rate limiting rules → Create rule, match `(http.request.uri.path eq "/api/contact" or http.request.uri.path eq "/mcp")`, threshold 10 requests / 1 minute / IP, action `Block`. Free tier allows one rule; this is the right one to use it on. Closes audit finding M2.
+- ☐ Confirm `functions/api/contact.js` does not log PII (audit finding M1 — fixed in iter-20).
+
+---
+
+## 10. After all of the above is done — verify
 
 - ☐ `make whoami` — confirms the API token still validates.
 - ☐ Re-run `make scan` / Gate 1 scanner at <https://isitagentready.com/agentreadypoc.com> — expected all green.

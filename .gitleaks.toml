@@ -6,9 +6,8 @@
 useDefault = true
 
 [allowlist]
-description = "Local-only and never-committed secrets. .env is in .gitignore; cf_api_token.txt was the operator's pre-prereq staging file (also gitignored)."
+description = "Local-only secret store. .env is gitignored but kept on disk for host helpers like `make whoami`; --no-git scans would otherwise flag it."
 
 paths = [
   '''^\.env$''',
-  '''^cf_api_token\.txt$''',
 ]

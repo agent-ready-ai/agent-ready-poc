@@ -106,14 +106,14 @@ export async function onRequest(context) {
   }
 
   // Submission is valid. Persistence + forwarding lands at Checkpoint 5+ once
-  // Email Workers is wired. For now log the submission to the Pages Function
-  // log so the operator can confirm end-to-end during Checkpoint 5 testing.
+  // Email Workers is wired. For now log a PII-free heartbeat to the Pages
+  // Function log so the operator can confirm end-to-end during Checkpoint 5
+  // testing without storing name, email, or IP in Cloudflare logs.
   console.log("[contact] valid submission", {
     ts: new Date().toISOString(),
-    name,
-    email,
     messageLength: message.length,
-    ip,
+    hasName: Boolean(name),
+    hasEmail: Boolean(email),
   });
 
   return new Response(JSON.stringify({ ok: true }), {

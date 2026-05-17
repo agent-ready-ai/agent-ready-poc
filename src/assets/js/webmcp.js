@@ -1,3 +1,8 @@
+// Note: registration runs on every page (intentional — Cloudflare Agent Ready
+// scanner checks navigator.modelContext on the root). submit_contact's
+// cfTurnstileToken requirement is the real gate; a fresh token can only be
+// obtained from the widget on /contact/.
+//
 // WebMCP tool registration. Exposes this site's HTTP endpoints to AI
 // agents through the emerging navigator.modelContext API.
 //

@@ -9,6 +9,15 @@ export default function (eleventyConfig) {
     typeof str === "string" && str.startsWith(prefix),
   );
 
+  // Safe JSON encoder for embedding inside <script type="application/ld+json">.
+  // JSON.stringify produces valid JSON, but a string value containing the
+  // literal substring "</script>" or "</style>" would prematurely close the
+  // surrounding tag. Escape those closer sequences. Output remains valid JSON
+  // because "<\/script>" is just an escaped forward slash.
+  eleventyConfig.addNunjucksFilter("jsonInHtml", (v) =>
+    JSON.stringify(v).replace(/<\/(script|style)/gi, "<\\/$1"),
+  );
+
   // BreadcrumbList JSON-LD generator. Returns an array of
   //   { position, name, item } from a page URL like "/services/dispatch-automation/",
   // rooted at the site URL. Returns [] for the home page.
