@@ -1,0 +1,38 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+---
+{%- set lastEntry = collections.all | last -%}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ site.name }}</title>
+  <subtitle>{{ site.tagline }}</subtitle>
+  <link href="{{ site.url }}/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="{{ site.url }}/" rel="alternate" type="text/html" />
+  <id>{{ site.url }}/</id>
+  <updated>{{ lastEntry.date.toISOString() }}</updated>
+  <generator uri="https://www.11ty.dev/" version="3.1.5">Eleventy</generator>
+  <rights>© {{ site.name }} — content licensed MIT via {{ site.github }}</rights>
+  <author>
+    <name>{{ site.builder.name }}</name>
+    <uri>{{ site.builder.sameAs[0] }}</uri>
+  </author>
+  {%- for entry in collections.all | reverse %}
+  {%- if entry.url != "/404.html" and entry.url != "/" %}
+  <entry>
+    <title>{{ entry.data.title }}</title>
+    <link href="{{ site.url }}{{ entry.url }}" rel="alternate" type="text/html" />
+    <id>{{ site.url }}{{ entry.url }}</id>
+    <published>{{ entry.date.toISOString() }}</published>
+    <updated>{{ entry.date.toISOString() }}</updated>
+    {%- if entry.data.description %}
+    <summary>{{ entry.data.description }}</summary>
+    {%- endif %}
+    <author>
+      <name>{{ site.builder.name }}</name>
+      <uri>{{ site.builder.sameAs[0] }}</uri>
+    </author>
+  </entry>
+  {%- endif %}
+  {%- endfor %}
+</feed>

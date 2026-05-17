@@ -13,7 +13,12 @@
     {% if description %}<meta property="og:description" content="{{ description }}" />{% endif %}
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="{{ site.url }}/assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:image" content="{{ site.url }}/assets/og.png" />
+    <link rel="alternate" type="application/atom+xml" title="{{ site.name }} feed" href="/feed.xml" />
     <link rel="stylesheet" href="/assets/css/main.css" />
     <script src="/assets/js/webmcp.js" defer></script>
     {% include "partials/analytics.njk" %}
@@ -94,7 +99,10 @@
             "author": { "@id": "{{ site.url }}/#builder" },
             "publisher": { "@id": "{{ site.url }}/#organization" },
             "inLanguage": "en",
-            "isPartOf": { "@id": "{{ site.url }}/#website" }
+            "isPartOf": { "@id": "{{ site.url }}/#website" },
+            "datePublished": "{{ page.date.toISOString() }}",
+            "dateModified": "{{ page.date.toISOString() }}",
+            "image": "{{ site.url }}/assets/og.png"
           }{% endif %}{% if howTo %},
           {
             "@type": "HowTo",
