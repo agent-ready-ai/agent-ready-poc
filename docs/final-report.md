@@ -182,12 +182,13 @@ Sample of `git log --oneline --graph --decorate --all`:
 
 **Pre-Checkpoint 7 to-dos that block publication:**
 
-- Set local git config (`user.name` / `user.email`) per Decision 2 if anonymizing future commits.
-- Decide on git history scrub (Decision 1: A accept / B rewrite / C squash-reinit) for the 19 existing commits authored as the operator's real name.
-- Run `make secret-scan` one more time before pushing; confirm 0 findings.
-- `chore(release): prepare v1.0.0` commit + tag `v1.0.0`.
-- `git remote add origin git@github.com:<user>/agent-ready-poc.git && git push -u origin main --tags`.
-- Connect the repo in the Cloudflare Pages dashboard for Git-driven deploys.
+- ✅ **Local git config** (Decision 2: yes) — set to `user.name = "agent-ready-poc operator"`, `user.email = "founder@agentreadypoc.com"`. Future commits anonymized. Global config untouched.
+- ✅ **Git history** (Decision 1: A — accept) — the 19+ commits authored under the operator's real name remain as-is. Operator accepted the exposure as part of the public artifact.
+- ⏸ **Push timing** (Decision 3: wait) — operator deferred the GitHub publication push. Re-run `make secret-scan`, create `chore(release): prepare v1.0.0` commit + tag, then push when ready.
+- ⏸ Run `make secret-scan` one more time before pushing; confirm 0 findings.
+- ⏸ `chore(release): prepare v1.0.0` commit + tag `v1.0.0`.
+- ⏸ `git remote add origin git@github.com:<user>/agent-ready-poc.git && git push -u origin main --tags`.
+- ⏸ Connect the repo in the Cloudflare Pages dashboard for Git-driven deploys.
 
 **Post-publication verification:**
 - Run all three gate scanners against the live site one final time.
