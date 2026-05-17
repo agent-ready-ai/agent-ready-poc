@@ -8,7 +8,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "build": "eleventy",
+    "build": "eleventy && node scripts/emit-md-alternates.js",
     "dev": "eleventy --serve",
     "validate": "node scripts/validate.js",
     "lighthouse": "bash scripts/lighthouse.sh",
