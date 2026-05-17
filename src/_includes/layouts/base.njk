@@ -76,8 +76,44 @@
             "name": "{{ title or site.name }}",
             {% if description %}"description": "{{ description }}",{% endif %}
             "isPartOf": { "@id": "{{ site.url }}/#website" },
-            "inLanguage": "en"
-          }{% if page.url != "/" %},
+            "inLanguage": "en",
+            "author": { "@id": "{{ site.url }}/#builder" },
+            "publisher": { "@id": "{{ site.url }}/#organization" },
+            "speakable": {
+              "@type": "SpeakableSpecification",
+              "cssSelector": ["h1", ".tldr", "blockquote"]
+            }
+          }{% if article %},
+          {
+            "@type": "Article",
+            "@id": "{{ site.url }}{{ page.url }}#article",
+            "headline": "{{ title or site.name }}",
+            {% if description %}"description": "{{ description }}",{% endif %}
+            "url": "{{ site.url }}{{ page.url }}",
+            "mainEntityOfPage": { "@id": "{{ site.url }}{{ page.url }}" },
+            "author": { "@id": "{{ site.url }}/#builder" },
+            "publisher": { "@id": "{{ site.url }}/#organization" },
+            "inLanguage": "en",
+            "isPartOf": { "@id": "{{ site.url }}/#website" }
+          }{% endif %}{% if howTo %},
+          {
+            "@type": "HowTo",
+            "@id": "{{ site.url }}{{ page.url }}#howto",
+            "name": {{ howTo.name | dump | safe }},
+            {% if howTo.description %}"description": {{ howTo.description | dump | safe }},{% endif %}
+            {% if howTo.totalTime %}"totalTime": "{{ howTo.totalTime }}",{% endif %}
+            "step": [
+              {%- for s in howTo.step %}
+              {
+                "@type": "HowToStep",
+                "position": {{ loop.index }},
+                "name": {{ s.name | dump | safe }},
+                "text": {{ s.text | dump | safe }}{% if s.url %},
+                "url": "{{ site.url }}{{ s.url }}"{% endif %}
+              }{% if not loop.last %},{% endif %}
+              {%- endfor %}
+            ]
+          }{% endif %}{% if page.url != "/" %},
           {
             "@type": "BreadcrumbList",
             "@id": "{{ site.url }}{{ page.url }}#breadcrumb",

@@ -2,6 +2,7 @@
 layout: layouts/base.njk
 title: Case studies — Agent Ready POC
 description: The real iteration log of how an autonomous agent built this site end-to-end on Cloudflare.
+article: true
 ---
 
 # Case studies

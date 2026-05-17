@@ -2,6 +2,7 @@
 layout: layouts/base.njk
 title: About — Agent Ready POC
 description: How this site was built, by whom, in what time, with what oversight, and what it proves about agent-driven product delivery.
+article: true
 ---
 
 # About this project

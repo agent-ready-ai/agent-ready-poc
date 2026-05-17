@@ -5,6 +5,7 @@ description: AI-drafted estimates from photos, voice notes, or partial specs. Mu
 service:
   name: Estimate acceleration
   framework: The Multimodal Draft Loop
+article: true
 ---
 
 # Estimate acceleration

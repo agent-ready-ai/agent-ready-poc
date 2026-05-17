@@ -5,6 +5,7 @@ description: Voice-first AI assistant for trades technicians. Hands-free manuals
 service:
   name: Field-tech copilot
   framework: Three-Modality Capture
+article: true
 ---
 
 # Field-tech copilot
