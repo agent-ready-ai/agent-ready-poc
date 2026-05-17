@@ -2,6 +2,20 @@
 layout: layouts/base.njk
 title: How we engage — Agent Ready POC
 description: The methodology this site was built with, applied to a real engagement with a skilled-trades client.
+article: true
+howTo:
+  name: How an Agent Ready POC engagement runs
+  description: A four-phase, fixed-scope, 4–8 week methodology for shipping an AI implementation into production at a skilled-trades or local-service business. Same methodology that built this site.
+  totalTime: P56D
+  step:
+    - name: Week 1 — Diagnose
+      text: Agent and operator pair shadow the client's workflow. No questionnaires; ride the truck, sit on the phones, watch the estimator. Output is a one-pager describing the workflow's actual shape (which is rarely what the org chart says).
+    - name: Week 2 — Scope
+      text: Agent drafts the build plan against the diagnosed workflow. Operator reviews with the client. Output is a signed scope with explicit "done" criteria, gate metrics, and a fixed delivery date.
+    - name: Weeks 3–6 — Build
+      text: Agent ships against the scope with daily git commits, weekly tagged iterations, weekly client check-in. Operator surfaces blockers. If a scope conflict emerges, the engagement pauses for a re-scope conversation — not for stealth scope expansion.
+    - name: Weeks 7–8 — Handoff
+      text: Production deploy, runbooks for routine operations, eval harness for regression testing, monitoring dashboards, training session, 30-day post-launch checkpoint. The client can operate the system without us.
 ---
 
 # How we engage

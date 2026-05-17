@@ -5,6 +5,7 @@ description: AI-assisted phone intake and scheduling for skilled-trades business
 service:
   name: Dispatch automation
   framework: Confidence-Routed Intake Pattern
+article: true
 ---
 
 # Dispatch automation
