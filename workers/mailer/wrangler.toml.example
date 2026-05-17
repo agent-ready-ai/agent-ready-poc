@@ -1,0 +1,29 @@
+# Mailer Worker configuration — committed template.
+#
+# Operator: copy this file to workers/mailer/wrangler.toml (which is
+# gitignored) and replace the two placeholders below with your
+# verified Email Routing destination address. The destination must be
+# verified in Cloudflare Email Routing FIRST or the send_email binding
+# will be rejected at deploy time.
+#
+# Deploy:
+#   make deploy-mailer
+# or, equivalently:
+#   docker compose exec dev sh -c 'cd workers/mailer && wrangler deploy'
+
+name = "agent-ready-poc-mailer"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+# No public URL — this Worker is only reachable via Service Binding
+# from the Pages Function. Reduces attack surface to zero outside
+# the Cloudflare account.
+workers_dev = false
+
+[vars]
+DESTINATION_ADDRESS = "<your-verified-destination@example.com>"
+SENDER_ADDRESS = "contact@agentreadypoc.com"
+
+[[send_email]]
+name = "SEND_EMAIL"
+destination_address = "<your-verified-destination@example.com>"

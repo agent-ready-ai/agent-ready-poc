@@ -105,16 +105,50 @@ export async function onRequest(context) {
     );
   }
 
-  // Submission is valid. Persistence + forwarding lands at Checkpoint 5+ once
-  // Email Workers is wired. For now log a PII-free heartbeat to the Pages
-  // Function log so the operator can confirm end-to-end during Checkpoint 5
-  // testing without storing name, email, or IP in Cloudflare logs.
+  // Operational PII-free heartbeat (audit finding M1, iter-20).
   console.log("[contact] valid submission", {
     ts: new Date().toISOString(),
     messageLength: message.length,
     hasName: Boolean(name),
     hasEmail: Boolean(email),
   });
+
+  // Defense-in-depth: reject CR/LF before passing to the mailer Worker so
+  // even if the Service Binding's caller were ever broader than this
+  // Function, header-injection attempts terminate at this boundary too.
+  if (/[\r\n]/.test(name) || /[\r\n]/.test(email)) {
+    return new Response(JSON.stringify({ error: "Invalid characters" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Forward to the standalone mailer Worker via Service Binding (iter-21).
+  // The Worker constructs the RFC 5322 message and calls env.SEND_EMAIL.send.
+  // Failure here is logged but does NOT change the user-facing response —
+  // the submission was already captured in Function logs; downstream
+  // forwarding is the operator's debug surface, not the user's problem.
+  if (env.MAILER) {
+    try {
+      const mailerResponse = await env.MAILER.fetch("https://internal-mailer/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message, ip }),
+      });
+      if (!mailerResponse.ok) {
+        const detail = await mailerResponse.text().catch(() => "");
+        console.error(
+          "[contact] mailer non-2xx",
+          mailerResponse.status,
+          detail.slice(0, 200),
+        );
+      }
+    } catch (err) {
+      console.error("[contact] mailer call threw:", err && err.message);
+    }
+  } else {
+    console.warn("[contact] env.MAILER binding missing — submission not forwarded");
+  }
 
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
