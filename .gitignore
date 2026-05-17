@@ -8,6 +8,8 @@ dist/
 lighthouse-reports/
 .claude/settings.local.json
 *.log
+GOAL.md
+CLAUDE.md
 
 # Loose token file (not committed; the spec assumes secrets live in .env)
 cf_api_token.txt

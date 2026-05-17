@@ -10,7 +10,7 @@ description: Live demonstration of what an autonomous AI agent can ship end-to-e
 
 ## What this site proves
 
-A single agent — Claude, running inside Claude Code — was handed a 37 KB mission brief (`GOAL.md`) and a host with only Docker installed. With minimal human intervention it: scaffolded the build environment in Docker, authored the 11ty static site, configured Cloudflare Pages, ran three independent quality gates against the live deployment, fixed regressions, and tagged each iteration's progress.
+A single agent — Claude, running inside Claude Code — was handed a detailed mission brief and a host with only Docker installed. With minimal human intervention it: scaffolded the build environment in Docker, authored the 11ty static site, configured Cloudflare Pages, ran three independent quality gates against the live deployment, fixed regressions, and tagged each iteration's progress.
 
 The point is not that the site is fancy. The point is that **nothing in the workflow required a human to write code, configure infrastructure, or hand-tune metrics**. The operator's role was approvals at the checkpoints the build plan deliberately reserved for human judgment.
 
