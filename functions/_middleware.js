@@ -11,6 +11,20 @@
 // Avoids infinite recursion via an internal X-Md-Negotiated marker
 // on the subrequest.
 
+// Pick the highest-q media type from an Accept header. RFC 7231 §5.3.2:
+// missing q defaults to 1; ties resolve by source order. We only need the
+// top candidate to decide whether the client *prefers* markdown over HTML.
+function preferred(accept) {
+  if (!accept) return null;
+  const parts = accept.split(",").map((p) => {
+    const [type, ...params] = p.trim().split(";").map((s) => s.trim());
+    const q = params.find((s) => s.startsWith("q="));
+    return { type: type.toLowerCase(), q: q ? parseFloat(q.slice(2)) : 1 };
+  });
+  parts.sort((a, b) => b.q - a.q);
+  return parts[0]?.type;
+}
+
 export async function onRequest(context) {
   const { request, next } = context;
 
@@ -20,8 +34,8 @@ export async function onRequest(context) {
     return next();
   }
 
-  const accept = request.headers.get("Accept") || "";
-  if (!accept.toLowerCase().includes("text/markdown")) {
+  const top = preferred(request.headers.get("Accept"));
+  if (top !== "text/markdown") {
     return next();
   }
 

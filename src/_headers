@@ -1,10 +1,14 @@
+# Note: Cloudflare Pages applies Access-Control-Allow-Origin: * to all responses
+# by default. Functions in functions/ override per-endpoint where credentialed
+# semantics matter; static HTML/CSS/JS don't carry credentials so the global
+# wildcard is acceptable. Reviewed: 2026-05.
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
-  Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data: https:; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com; frame-src https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data: https:; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com; frame-src https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   Cross-Origin-Opener-Policy: same-origin
   content-signals: search=yes, ai-train=no, ai-input=yes
   Link: </sitemap.xml>; rel="sitemap"; type="application/xml", </llms.txt>; rel="alternate"; type="text/plain", </llms-full.txt>; rel="alternate"; type="text/plain", </api/agent-info>; rel="related"; type="application/json", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/agent-skills/index.json>; rel="related"; type="application/json", </.well-known/mcp/server-card.json>; rel="related"; type="application/json", </mcp>; rel="related"; type="application/json"

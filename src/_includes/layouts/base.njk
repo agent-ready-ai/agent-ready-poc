@@ -107,16 +107,16 @@
           {
             "@type": "HowTo",
             "@id": "{{ site.url }}{{ page.url }}#howto",
-            "name": {{ howTo.name | dump | safe }},
-            {% if howTo.description %}"description": {{ howTo.description | dump | safe }},{% endif %}
+            "name": {{ howTo.name | jsonInHtml | safe }},
+            {% if howTo.description %}"description": {{ howTo.description | jsonInHtml | safe }},{% endif %}
             {% if howTo.totalTime %}"totalTime": "{{ howTo.totalTime }}",{% endif %}
             "step": [
               {%- for s in howTo.step %}
               {
                 "@type": "HowToStep",
                 "position": {{ loop.index }},
-                "name": {{ s.name | dump | safe }},
-                "text": {{ s.text | dump | safe }}{% if s.url %},
+                "name": {{ s.name | jsonInHtml | safe }},
+                "text": {{ s.text | jsonInHtml | safe }}{% if s.url %},
                 "url": "{{ site.url }}{{ s.url }}"{% endif %}
               }{% if not loop.last %},{% endif %}
               {%- endfor %}
@@ -130,7 +130,7 @@
               {
                 "@type": "ListItem",
                 "position": {{ crumb.position }},
-                "name": {{ crumb.name | dump | safe }},
+                "name": {{ crumb.name | jsonInHtml | safe }},
                 "item": "{{ crumb.item }}"
               }{% if not loop.last %},{% endif %}
               {%- endfor %}
@@ -139,15 +139,15 @@
           {
             "@type": "Service",
             "@id": "{{ site.url }}{{ page.url }}#service",
-            "name": {{ service.name | dump | safe }},
-            {% if description %}"description": {{ description | dump | safe }},{% endif %}
+            "name": {{ service.name | jsonInHtml | safe }},
+            {% if description %}"description": {{ description | jsonInHtml | safe }},{% endif %}
             "provider": { "@id": "{{ site.url }}/#organization" },
             "serviceType": "AI implementation",
             "areaServed": "United States"{% if service.framework %},
             "additionalProperty": {
               "@type": "PropertyValue",
               "name": "Framework",
-              "value": {{ service.framework | dump | safe }}
+              "value": {{ service.framework | jsonInHtml | safe }}
             }{% endif %}
           }{% endif %}{% if faqs %},
           {
@@ -157,8 +157,8 @@
               {%- for faq in faqs %}
               {
                 "@type": "Question",
-                "name": {{ faq.q | dump | safe }},
-                "acceptedAnswer": { "@type": "Answer", "text": {{ faq.a | dump | safe }} }
+                "name": {{ faq.q | jsonInHtml | safe }},
+                "acceptedAnswer": { "@type": "Answer", "text": {{ faq.a | jsonInHtml | safe }} }
               }{% if not loop.last %},{% endif %}
               {%- endfor %}
             ]

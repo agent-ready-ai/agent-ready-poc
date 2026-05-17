@@ -5,7 +5,7 @@
   "description": "Agent-ready static site demo deployed end-to-end on Cloudflare.",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": "22"
   },
   "scripts": {
     "build": "eleventy && node scripts/emit-md-alternates.js",
