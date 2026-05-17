@@ -1,0 +1,72 @@
+{
+  "name": "Agent Ready POC",
+  "version": "1.0.0",
+  "description": "Organizational discovery and contact intake for an AI-implementation firm focused on skilled trades. Two skills exposed via HTTP endpoints.",
+  "publisher": {
+    "name": "Agent Ready POC",
+    "url": "https://agentreadypoc.com",
+    "contact": "founder@agentreadypoc.com"
+  },
+  "skills": [
+    {
+      "name": "get_organization_info",
+      "description": "Returns a JSON summary of the organization: services with named frameworks, contact info, discovery URLs, and build provenance.",
+      "method": "GET",
+      "url": "https://agentreadypoc.com/api/agent-info",
+      "request": {
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "responses": {
+        "200": {
+          "content_type": "application/json",
+          "schema_ref": "https://agentreadypoc.com/openapi.json#/components/schemas/AgentInfo"
+        },
+        "405": {
+          "description": "Method not allowed (only GET supported)"
+        }
+      },
+      "cache": "public, max-age=3600",
+      "auth": "none"
+    },
+    {
+      "name": "submit_contact",
+      "description": "Submit a contact-form message to the operator. Requires a Cloudflare Turnstile token captured by the widget on /contact/.",
+      "method": "POST",
+      "url": "https://agentreadypoc.com/api/contact",
+      "request": {
+        "content_type": "multipart/form-data",
+        "fields": {
+          "name": "string (required, max 200 chars)",
+          "email": "string email format (required, max 200 chars)",
+          "message": "string (required, max 5000 chars)",
+          "cf-turnstile-response": "string (required) — Turnstile widget token",
+          "website": "string honeypot (must be empty)"
+        }
+      },
+      "responses": {
+        "200": {
+          "content_type": "application/json",
+          "schema": { "ok": "boolean" }
+        },
+        "400": {
+          "content_type": "application/json",
+          "schema": { "error": "string" }
+        },
+        "503": {
+          "description": "Form not configured (TURNSTILE_SECRET_KEY missing)"
+        }
+      },
+      "auth": "cloudflare-turnstile",
+      "rate_limit": "Pages Functions default"
+    }
+  ],
+  "discovery": {
+    "openapi": "https://agentreadypoc.com/openapi.json",
+    "api_catalog": "https://agentreadypoc.com/.well-known/api-catalog",
+    "llms": "https://agentreadypoc.com/llms.txt",
+    "llms_full": "https://agentreadypoc.com/llms-full.txt",
+    "sitemap": "https://agentreadypoc.com/sitemap.xml"
+  }
+}
