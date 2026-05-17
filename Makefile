@@ -48,6 +48,9 @@ dev: ## Start Eleventy dev server
 deploy: build ## Deploy dist/ to Cloudflare Pages
 	$(DO) sh -c 'wrangler pages deploy dist --project-name=$$(cat .pages-project)'
 
+deploy-mailer: ## Deploy the standalone email-sending Worker (separate from Pages)
+	$(DO) sh -c 'cd workers/mailer && wrangler deploy'
+
 whoami: ## Verify Cloudflare API token and scopes
 	$(DO) wrangler whoami
 
