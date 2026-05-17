@@ -2,8 +2,14 @@
 # Inference/lookup bots are allowed; training-only bots are blocked,
 # mirroring content-signals: search=yes, ai-train=no, ai-input=yes.
 
+# Per contentsignals.org / IETF draft — declares AI usage preferences
+# directly in robots.txt so crawlers that don't read response headers
+# still see the policy.
+Content-Signal: search=yes, ai-train=no, ai-input=yes
+
 User-agent: *
 Allow: /
+Content-Signal: search=yes, ai-train=no, ai-input=yes
 
 # Training bots — disallow
 User-agent: GPTBot
