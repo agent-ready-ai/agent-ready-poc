@@ -126,7 +126,10 @@
   <body>
     <a class="skip-link" href="#main">Skip to main content</a>
     <header>
-      {% include "partials/nav.njk" %}
+      <div class="masthead">
+        <a class="wordmark" href="/" aria-label="{{ site.name }} — home">{{ site.shortName }}</a>
+        {% include "partials/nav.njk" %}
+      </div>
     </header>
     <main id="main">
       {{ content | safe }}
