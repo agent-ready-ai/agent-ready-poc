@@ -7,7 +7,7 @@
   Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data: https:; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com; frame-src https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'
   Cross-Origin-Opener-Policy: same-origin
   content-signals: search=yes, ai-train=no, ai-input=yes
-  Link: </sitemap.xml>; rel="sitemap"; type="application/xml", </llms.txt>; rel="alternate"; type="text/plain", </llms-full.txt>; rel="alternate"; type="text/plain", </api/agent-info>; rel="related"; type="application/json", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/agent-skills/index.json>; rel="related"; type="application/json"
+  Link: </sitemap.xml>; rel="sitemap"; type="application/xml", </llms.txt>; rel="alternate"; type="text/plain", </llms-full.txt>; rel="alternate"; type="text/plain", </api/agent-info>; rel="related"; type="application/json", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/agent-skills/index.json>; rel="related"; type="application/json", </.well-known/mcp/server-card.json>; rel="related"; type="application/json", </mcp>; rel="related"; type="application/json"
   Vary: Accept
 
 /*.md
@@ -20,6 +20,9 @@
   Content-Type: application/linkset+json; charset=utf-8
 
 /.well-known/agent-skills/index.json
+  Content-Type: application/json; charset=utf-8
+
+/.well-known/mcp/server-card.json
   Content-Type: application/json; charset=utf-8
 
 /.well-known/security.txt
