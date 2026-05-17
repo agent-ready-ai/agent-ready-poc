@@ -3,6 +3,7 @@
 A proof-of-concept that an autonomous AI agent — Claude, running inside Claude Code — can ship a complete, modern, secure, accessible, agent-ready static site end-to-end on Cloudflare, with a human operator's role limited to approval at eight checkpoints reserved for human judgment.
 
 **Live:** <https://agentreadypoc.com> · also <https://agent-ready-poc.pages.dev>
+**Source:** <https://github.com/johnson-cloud-ai/agent-ready-poc> · MIT licensed · v1.0.0
 
 ## What's in this repository
 

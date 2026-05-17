@@ -52,11 +52,11 @@ Until then, email is the only inbound channel.
 
 ## Source
 
-The full repository will be published to GitHub at Checkpoint 7. Once it is, the link lands here and in the README. The repository will include:
+Public repository: **<https://github.com/johnson-cloud-ai/agent-ready-poc>** (MIT). Includes:
 
 - **Build:** `Dockerfile`, `docker-compose.yml`, `Makefile`, `.eleventy.js`, the verification scripts (lighthouse, axe, validate, scan)
 - **Site:** every page on this site, every `_headers` rule, every JSON-LD graph entry
-- **History:** every commit, every iteration tag, every fix branch — un-rewritten
+- **History:** every commit and 15 annotated iteration tags — `iter-0-baseline` through `v1.0.0`
 
 ## Hours
 

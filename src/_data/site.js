@@ -54,5 +54,5 @@ export default {
     beaconToken: null,
   },
   hours: "Monday–Friday, 9–5 US Eastern (project communication; the site itself is async).",
-  github: null, // set at Checkpoint 7 after publication
+  github: "https://github.com/johnson-cloud-ai/agent-ready-poc",
 };
