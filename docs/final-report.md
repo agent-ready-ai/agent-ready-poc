@@ -56,19 +56,21 @@ Expected-green basis:
 
 | Page | Perf-D | Perf-M | A11y-D | A11y-M | BP | SEO | LCP-D | LCP-M | CLS | INP |
 |---|---|---|---|---|---|---|---|---|---|---|
-| / | 100 | 100 | 100 | 100 | 100 | 100 | 309ms | 800ms | 0 | 0 |
-| /about/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /services/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /services/dispatch-automation/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /services/estimate-acceleration/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /services/field-tech-copilot/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /case-studies/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /how-we-engage/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /blog/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /faq/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
-| /contact/ | 100 | 100 | 100 | 100 | 100 | 100 | — | — | 0 | 0 |
+| / | 100 | 100 | 100 | 100 | 100 | **92*** | 480ms | 1725ms | 0 | 0 |
+| /about/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /services/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /services/dispatch-automation/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /services/estimate-acceleration/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /services/field-tech-copilot/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /case-studies/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /how-we-engage/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /blog/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /faq/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
+| /contact/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
 
 CWVs are well under thresholds (LCP target <2.5s, CLS target <0.1, INP target <200ms).
+
+**\*SEO 92 is a deliberate trade-off, not a build failure.** Lighthouse's robots.txt validator (Google's strict RFC parser) flags `Content-Signal:` as an "Unknown directive" — and `Content-Signal: search=yes, ai-train=no, ai-input=yes` is exactly the directive the Cloudflare Agent Ready scanner requires in `robots.txt` for the Bot Access Control category to score 2/2 (GREEN). The two standards bodies disagree. The project sided with Cloudflare since the entire premise is agent-readiness; SEO 92 instead of 100 reflects that explicit choice. See Gotcha #9.
 
 | External validator | Expected | Operator-verified |
 |---|---|---|
@@ -170,7 +172,9 @@ Sample of `git log --oneline --graph --decorate --all`:
 5. **@axe-core/cli requires chromedriver.** Not installed in the Debian Chromium package; swapped to `@axe-core/puppeteer` which talks to Chromium over CDP directly.
 6. **W3C nu validator rate-limits.** Twelve sequential POSTs in 30s trips a 403. Added a 2s sleep between requests in `scripts/validate.js`; throttle could be tuned further if it recurs.
 7. **Custom domain CNAMEs don't auto-create on Pages domain attach.** Wrangler's `pages domain` subcommand doesn't exist; used Cloudflare API directly. The CNAME records (`@` and `www`, both proxied) had to be created via a second API call; the domain `status: pending → active` transition happened within ~10 minutes of CNAME creation.
-8. **Gate 1 scanner is JS-rendered.** WebFetch returns the empty template, not scan results. Manual operator action required for Gate 1 verification.
+8. **Gate 1 scanner is JS-rendered.** WebFetch returns the empty template, not scan results. Closed in iter-11 by writing a puppeteer-based scanner (`scripts/scan.js`) that drives the system Chromium, waits for the JS-rendered results to land, and extracts category scores + per-check failure detail from the DOM. After iter-11 the scanner runs headlessly from `make scan` and the operator no longer has to manually browse to the scanner.
+
+9. **`Content-Signal:` in `robots.txt` triggers a Lighthouse SEO penalty.** Google's robots.txt parser (which Lighthouse uses) strictly validates against the canonical directive set (User-agent, Allow, Disallow, Sitemap, Crawl-delay). It flags `Content-Signal:` as "Unknown directive" and the audit fails with `score: 0` — costing 8 SEO points. **But** Cloudflare's Agent Ready scanner explicitly requires that same directive in `robots.txt` to score the Bot Access Control "Content Signals in robots.txt" check as passing (2/2). The two standards bodies disagree about what robots.txt is allowed to contain. Operator chose to keep the Cloudflare-aligned directive (Gate 1 Bot Access stays 2/2 GREEN); Gate 2 mobile/desktop SEO settle at 92 instead of 100. The decision was conscious and is documented here so future maintainers don't "fix" it by removing the directive and silently regressing Gate 1.
 
 ## Handoff Notes
 
