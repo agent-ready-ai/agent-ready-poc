@@ -55,7 +55,7 @@ These references are reflected as `sameAs` links on the `Person` and publishing 
 
 ## Source
 
-The repository is published at GitHub (link lands here at Checkpoint 7). Every commit is conventional-format; every iteration is annotated-tagged with the gate scores at that iteration; the SDLC and security posture are documented in the README.
+The repository is published at **<https://github.com/johnson-cloud-ai/agent-ready-poc>** under the MIT license. Every commit is conventional-format; every iteration is annotated-tagged with the gate scores at that tag's state; the SDLC and security posture are documented in the README.
 
 ---
 

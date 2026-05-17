@@ -30,4 +30,4 @@
 - [robots.txt](/robots.txt) — non-blanket AI bot rules: training-only bots disallowed (GPTBot, Google-Extended, anthropic-ai, CCBot, Applebot-Extended, Bytespider, FacebookBot); inference bots welcomed (ChatGPT-User, ClaudeBot, PerplexityBot, OAI-SearchBot).
 - [llms-full.txt](/llms-full.txt) — concatenated content of every page.
 - [/api/agent-info](/api/agent-info) — JSON summary of the organization, services, and discovery URLs. Wildcard CORS; GET-only.
-- [Source repository](https://github.com/) — link lands at Checkpoint 7 publication.
+- [Source repository](https://github.com/johnson-cloud-ai/agent-ready-poc) — full source, MIT licensed.
