@@ -26,7 +26,40 @@
             "@id": "{{ site.url }}/#organization",
             "name": "{{ site.name }}",
             "url": "{{ site.url }}",
-            "description": "{{ site.description }}"
+            "description": "{{ site.description }}",
+            "founder": { "@id": "{{ site.url }}/#builder" },
+            "publisher": { "@id": "https://www.anthropic.com/#organization" }
+          },
+          {
+            "@type": "Person",
+            "@id": "{{ site.url }}/#builder",
+            "name": "{{ site.builder.name }}",
+            "description": "{{ site.builder.description }}",
+            "worksFor": { "@id": "https://www.anthropic.com/#organization" },
+            "knowsAbout": [
+              "Static site generation",
+              "Cloudflare Pages",
+              "JSON-LD entity graphs",
+              "WCAG 2.1 AA accessibility",
+              "Build-system automation",
+              "AI adoption in skilled-trades businesses"
+            ],
+            "sameAs": [
+              {%- for s in site.builder.sameAs %}
+              "{{ s }}"{% if not loop.last %},{% endif %}
+              {%- endfor %}
+            ]
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://www.anthropic.com/#organization",
+            "name": "{{ site.publisher.name }}",
+            "url": "{{ site.publisher.url }}",
+            "sameAs": [
+              {%- for s in site.publisher.sameAs %}
+              "{{ s }}"{% if not loop.last %},{% endif %}
+              {%- endfor %}
+            ]
           },
           {
             "@type": "WebSite",

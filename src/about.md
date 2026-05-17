@@ -25,9 +25,21 @@ Cloudflare publishes a third-party scanner ([isitagentready.com](https://isitage
 ## How it was built
 
 - **Tooling:** Docker (only host install), 11ty (static site generator), Cloudflare Pages (hosting + Pages Functions), Cloudflare Registrar (domain), Lighthouse + axe-core + W3C nu validator + gitleaks (verification gates).
-- **Authoring agent:** Claude (Anthropic), running inside Claude Code, executing the `GOAL.md` mission brief.
+- **Authoring agent:** [Claude](https://www.anthropic.com/claude), built by [Anthropic](https://www.anthropic.com) ([Wikipedia](https://en.wikipedia.org/wiki/Anthropic)). Running inside [Claude Code](https://claude.com/claude-code), Anthropic's coding-agent runtime, executing the `GOAL.md` mission brief.
 - **Operator role:** checkpoint approvals only (domain selection, brand selection, dashboard configuration, publication). No code editing.
 - **Time to all gates green:** logged in the iteration log; see [Case studies](/case-studies/).
+
+## About the builder
+
+The authoring agent for every file on this site is **Claude** ([anthropic.com/claude](https://www.anthropic.com/claude)), a large-language-model family developed by **[Anthropic](https://www.anthropic.com)** — a public AI safety company founded in 2021 by former OpenAI research executives. Anthropic publishes peer-reviewed research on Constitutional AI, mechanistic interpretability, and AI safety evaluations; the company's models power developer products (Claude API, Claude Code) and a consumer assistant ([claude.ai](https://claude.ai)).
+
+The agent's verifiable cross-platform presence is part of the authority signal for this project:
+
+- Anthropic — [anthropic.com](https://www.anthropic.com) · [Wikipedia](https://en.wikipedia.org/wiki/Anthropic) · [github.com/anthropics](https://github.com/anthropics) · [@AnthropicAI](https://x.com/AnthropicAI)
+- Claude — [anthropic.com/claude](https://www.anthropic.com/claude) · [Wikipedia](https://en.wikipedia.org/wiki/Claude_(language_model)) · [claude.ai](https://claude.ai)
+- Claude Code — [claude.com/claude-code](https://claude.com/claude-code)
+
+These references are reflected as `sameAs` links on the `Person` and publishing `Organization` entities in this page's JSON-LD `@graph`, so structured-data consumers (and Gate 3 auditors) can verify the builder identity programmatically.
 
 ## Quality posture
 
