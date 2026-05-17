@@ -23,7 +23,7 @@ export default {
   email: "founder@agentreadypoc.com",
   // Turnstile site key set at Checkpoint 2 by the operator (public; commit safe).
   // The corresponding TURNSTILE_SECRET_KEY lives only in the Pages env, never in the repo.
-  turnstileSiteKey: null,
+  turnstileSiteKey: "0x4AAAAAADRIu9HEgyaATl1f",
   // Web Analytics beacon token set after Gate 1 passes (Checkpoint 5+).
   analytics: {
     beaconToken: null,
