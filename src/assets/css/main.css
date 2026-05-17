@@ -1,29 +1,605 @@
-/* Baseline CSS. Minimum to clear WCAG 2.5.8 (Target Size, AA) on link
- * elements that would otherwise render at the browser default ~17px height.
- * Content/visual styling lands in a later iteration. */
+/* ============================================================
+   Agent Ready POC — visual identity
+   Iteration 16 (feat/iter-16-design)
+   ------------------------------------------------------------
+   Editorial / operations-document aesthetic. System fonts only
+   (no webfont request). Light + dark. WCAG 2.1 AA.
 
-nav a,
-.skip-link {
-  display: inline-block;
-  padding: 6px 8px;
+   Design tokens, then resets, then layout, then components,
+   then utilities. Comments explain non-obvious choices.
+   ============================================================ */
+
+/* -- Design tokens ------------------------------------------ */
+
+:root {
+  /* Type stacks. Charter/Iowan/Cambria/Georgia all ship on
+     Apple, Windows, Android, and modern Linux distros. The
+     fallback to system serif is intentional. No webfont. */
+  --font-serif:
+    "Charter", "Iowan Old Style", "Iowan", "Cambria", "Georgia",
+    ui-serif, serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text",
+    "Segoe UI", system-ui, sans-serif;
+  --font-mono:
+    ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas",
+    "Liberation Mono", monospace;
+
+  /* Type scale — 1.5 ratio, anchored at 17px / 1.6 leading.
+     Computed values flatten the ratio at the bottom to keep
+     small UI text legible. */
+  --fs-base: 1.0625rem;       /* 17px */
+  --fs-step--1: 0.875rem;     /* 14px — captions, footers */
+  --fs-step--2: 0.75rem;      /* 12px — labels, footnote markers */
+  --fs-step-1: 1.1875rem;     /* 19px — lede */
+  --fs-step-2: 1.375rem;      /* 22px — h3 */
+  --fs-step-3: 1.75rem;       /* 28px — h2 */
+  --fs-step-4: 2.375rem;      /* 38px — h1 page */
+  --fs-step-5: 3rem;          /* 48px — h1 home */
+
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-body: 1.6;
+
+  /* Spacing — 4pt base, multiples to ~96px. */
+  --s-1: 0.25rem;             /* 4 */
+  --s-2: 0.5rem;              /* 8 */
+  --s-3: 0.75rem;             /* 12 */
+  --s-4: 1rem;                /* 16 */
+  --s-5: 1.5rem;              /* 24 */
+  --s-6: 2rem;                /* 32 */
+  --s-7: 3rem;                /* 48 */
+  --s-8: 4rem;                /* 64 */
+  --s-9: 6rem;                /* 96 */
+
+  /* Color — light. Bone-white ground, oil-black ink, single
+     signal color (a kiln-fired terracotta). All combinations
+     against the relevant ground clear WCAG 2.1 AA. */
+  --c-paper: #fbfaf7;
+  --c-paper-2: #f3f1ea;       /* slightly inset surfaces */
+  --c-ink: #14110f;           /* body text on paper — 17.8:1 */
+  --c-ink-soft: #4a443e;      /* meta text — 8.0:1 */
+  --c-rule: #d8d2c5;          /* hairline borders — 3.1:1 vs paper */
+  --c-rule-soft: #ebe7dd;     /* dividers */
+  --c-accent: #b9472b;        /* terracotta — 5.3:1 on paper */
+  --c-accent-ink: #9a3a22;    /* darker for hover — 7.0:1 */
+  --c-focus: #1f6feb;         /* accessible blue focus — 4.6:1 */
+  --c-callout-bg: #f6efe6;    /* TL;DR ground */
+
+  /* Layout */
+  --measure: 68ch;            /* prose width — long-form */
+  --measure-wide: 78ch;       /* index pages, services index */
+  --page-pad-x: clamp(var(--s-5), 4vw, var(--s-7));
+
+  /* Component-level */
+  --radius: 2px;              /* lozenge, not pill — restraint */
+  --rule: 1px solid var(--c-rule);
+  --rule-soft: 1px solid var(--c-rule-soft);
+
+  color-scheme: light;
 }
 
-/* Skip link visible only when focused — standard pattern. */
+/* Dark mode mirrors the same palette with reduced eye strain.
+   Terracotta brightens slightly to clear contrast against the
+   dark ground. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-paper: #0e0d0c;
+    --c-paper-2: #16140f;
+    --c-ink: #ece5d8;         /* 16.2:1 on paper */
+    --c-ink-soft: #a59b89;    /* 6.0:1 */
+    --c-rule: #2c2823;        /* 3.2:1 vs paper */
+    --c-rule-soft: #1a1815;
+    --c-accent: #e07a5f;      /* 7.2:1 on dark paper */
+    --c-accent-ink: #f0967c;
+    --c-focus: #5a9bff;       /* 6.5:1 */
+    --c-callout-bg: #1a1612;
+    color-scheme: dark;
+  }
+}
+
+/* -- Reset (targeted, not nuclear) ------------------------- */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Slightly larger root size on small screens improves the
+     measure without forcing a media query. */
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--c-paper);
+  color: var(--c-ink);
+  font: 400 var(--fs-base)/var(--lh-body) var(--font-serif);
+  font-feature-settings: "kern", "liga", "onum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg { max-width: 100%; height: auto; display: block; }
+
+hr {
+  border: 0;
+  border-top: var(--rule);
+  margin: var(--s-7) 0;
+}
+
+/* -- Skip link (preserve the hide-until-focus pattern) ---- */
+
 .skip-link {
   position: absolute;
-  left: 0;
-  top: 0;
-  transform: translateY(-200%);
+  left: var(--s-3);
+  top: var(--s-3);
+  z-index: 100;
+  display: inline-block;
+  padding: var(--s-2) var(--s-4);
+  background: var(--c-ink);
+  color: var(--c-paper);
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  text-decoration: none;
+  border-radius: var(--radius);
+  transform: translateY(calc(-100% - var(--s-4)));
+  transition: transform 120ms ease-out;
 }
 .skip-link:focus {
   transform: translateY(0);
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
 }
 
-/* Honeypot — off-screen but available to bots that submit every field. */
+/* -- Header / nav ----------------------------------------- */
+
+body > header {
+  border-bottom: var(--rule);
+  background: var(--c-paper);
+  padding: var(--s-5) var(--page-pad-x) var(--s-4);
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3) var(--s-6);
+  max-width: 96rem;
+  margin: 0 auto;
+}
+
+.wordmark {
+  font-family: var(--font-mono);
+  font-size: var(--fs-step--1);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: var(--s-1) 0;
+  /* Touch target ≥24px guaranteed by line-height + padding */
+  line-height: 1.5;
+}
+.wordmark:hover { color: var(--c-accent); }
+.wordmark::before {
+  content: "■";
+  display: inline-block;
+  color: var(--c-accent);
+  margin-right: var(--s-2);
+  font-size: 0.85em;
+  transform: translateY(-0.05em);
+}
+
+nav[aria-label="Primary"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-2);
+}
+nav[aria-label="Primary"] a {
+  display: inline-block;
+  padding: var(--s-2) var(--s-3);
+  min-height: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  font-weight: 500;
+  color: var(--c-ink-soft);
+  text-decoration: none;
+  border-radius: var(--radius);
+  line-height: 1.5;
+}
+nav[aria-label="Primary"] a:hover {
+  color: var(--c-ink);
+  background: var(--c-paper-2);
+}
+nav[aria-label="Primary"] a[aria-current="page"] {
+  color: var(--c-ink);
+  background: var(--c-paper-2);
+  box-shadow: inset 0 -2px 0 0 var(--c-accent);
+}
+
+/* -- Main layout ------------------------------------------ */
+
+main#main {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: var(--s-8) var(--page-pad-x) var(--s-9);
+}
+
+/* Services index, FAQ, case studies — long lists read better
+   with a slightly wider measure. Pages with these slugs are
+   identified by body attribute? No JS, no attribute. Instead
+   we just use the wider measure on h2-dense pages, which is
+   any page — keep one measure, lean newspaper. */
+
+/* -- Prose typography ------------------------------------- */
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--c-ink);
+  letter-spacing: -0.015em;
+  line-height: var(--lh-tight);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2rem, 1.5rem + 2vw, var(--fs-step-5));
+  margin: 0 0 var(--s-5);
+  letter-spacing: -0.025em;
+}
+h1::after {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 3px;
+  background: var(--c-accent);
+  margin-top: var(--s-4);
+}
+
+h2 {
+  font-size: var(--fs-step-3);
+  margin: var(--s-8) 0 var(--s-4);
+  padding-top: var(--s-4);
+  border-top: var(--rule-soft);
+  line-height: var(--lh-snug);
+}
+
+h3 {
+  font-size: var(--fs-step-2);
+  margin: var(--s-6) 0 var(--s-3);
+  line-height: var(--lh-snug);
+}
+
+h4 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-soft);
+  margin: var(--s-5) 0 var(--s-2);
+}
+
+/* Paragraph rhythm — generous but not wasteful. */
+p {
+  margin: 0 0 var(--s-4);
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  text-wrap: pretty;
+}
+
+/* First paragraph after h1 — the lede — gets a slight bump. */
+h1 + p,
+h1 + blockquote + p {
+  font-size: var(--fs-step-1);
+  color: var(--c-ink);
+  line-height: 1.55;
+}
+
+/* Lists */
+ul, ol {
+  margin: 0 0 var(--s-4);
+  padding-left: var(--s-5);
+}
+li { margin-bottom: var(--s-2); }
+li > p:last-child { margin-bottom: 0; }
+
+/* List markers in accent — small detail, strong identity. */
+ul > li::marker { color: var(--c-accent); }
+ol > li::marker { color: var(--c-ink-soft); font-variant-numeric: tabular-nums; }
+
+/* Strong + emphasis — keep them functional, not decorative. */
+strong { font-weight: 600; color: var(--c-ink); }
+em { font-style: italic; }
+
+/* -- Links ------------------------------------------------ */
+
+a {
+  color: var(--c-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, var(--c-accent) 40%, transparent);
+  transition: color 100ms ease, text-decoration-color 100ms ease;
+}
+a:hover {
+  color: var(--c-accent-ink);
+  text-decoration-color: var(--c-accent);
+}
+a:visited { color: var(--c-accent-ink); }
+/* Footnote/mail link refinement is below. */
+
+/* Focus — visible everywhere. 3px outline at 2px offset
+   clears 3:1 contrast against both paper and dark grounds. */
+:focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* -- Blockquote = TL;DR callout --------------------------- */
+
+blockquote {
+  margin: var(--s-5) 0 var(--s-6);
+  padding: var(--s-4) var(--s-5);
+  border-left: 3px solid var(--c-accent);
+  background: var(--c-callout-bg);
+  font-family: var(--font-serif);
+  font-size: var(--fs-step-1);
+  line-height: 1.5;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+blockquote p:last-child { margin-bottom: 0; }
+blockquote strong:first-child {
+  display: inline-block;
+  margin-right: var(--s-2);
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  font-weight: 700;
+  vertical-align: 0.15em;
+}
+
+/* -- Code ------------------------------------------------- */
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  font-feature-settings: normal;
+}
+:not(pre) > code {
+  background: var(--c-paper-2);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius);
+  border: 1px solid var(--c-rule-soft);
+  white-space: nowrap;
+}
+pre {
+  background: var(--c-paper-2);
+  padding: var(--s-4);
+  border: var(--rule);
+  border-left: 3px solid var(--c-accent);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 0 0 var(--s-5);
+  line-height: 1.5;
+}
+pre code { background: none; border: 0; padding: 0; white-space: pre; }
+
+/* -- Tables ----------------------------------------------- */
+
+table {
+  width: 100%;
+  margin: var(--s-5) 0;
+  border-collapse: collapse;
+  font-size: var(--fs-step--1);
+  font-family: var(--font-sans);
+}
+thead th {
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--fs-step--2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-soft);
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 2px solid var(--c-ink);
+}
+tbody td, tbody th {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: var(--rule-soft);
+  vertical-align: top;
+}
+tbody tr:last-child td,
+tbody tr:last-child th { border-bottom: 0; }
+tbody tr:hover { background: var(--c-paper-2); }
+
+/* -- Footnotes (markdown-it-footnote output) -------------- */
+
+.footnotes,
+section.footnotes {
+  margin-top: var(--s-8);
+  padding-top: var(--s-5);
+  border-top: var(--rule);
+  font-size: var(--fs-step--1);
+  color: var(--c-ink-soft);
+}
+.footnotes hr { display: none; }
+.footnotes ol { padding-left: var(--s-5); }
+.footnotes li { margin-bottom: var(--s-3); line-height: 1.5; }
+.footnote-ref,
+a.footnote-ref {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  vertical-align: super;
+  text-decoration: none;
+  margin-left: 0.1em;
+}
+.footnote-backref { text-decoration: none; margin-left: var(--s-2); }
+
+/* -- Forms (contact) -------------------------------------- */
+
+form {
+  margin: var(--s-5) 0;
+  max-width: 36rem;
+}
+form p { margin-bottom: var(--s-4); }
+
+label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: var(--s-2);
+}
+label span[aria-hidden="true"] {
+  color: var(--c-accent);
+  margin-left: 0.15em;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--s-3) var(--s-3);
+  font: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--c-ink);
+  background: var(--c-paper);
+  border: 0;
+  border-bottom: 2px solid var(--c-rule);
+  border-radius: 0;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+textarea {
+  border: 1px solid var(--c-rule);
+  border-left: 2px solid var(--c-rule);
+  resize: vertical;
+  line-height: 1.55;
+}
+input[type="text"]:hover,
+input[type="email"]:hover,
+textarea:hover {
+  border-color: var(--c-ink-soft);
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--c-accent);
+  background: var(--c-callout-bg);
+}
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+button,
+input[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 44px;
+  padding: var(--s-3) var(--s-5);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--c-paper);
+  background: var(--c-ink);
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 120ms ease, transform 80ms ease;
+}
+button:hover,
+input[type="submit"]:hover {
+  background: var(--c-accent);
+}
+button:active { transform: translateY(1px); }
+
+#contact-status {
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  color: var(--c-ink-soft);
+  min-height: 1.5em;
+  margin-top: var(--s-3);
+}
+#contact-status:not(:empty) {
+  padding: var(--s-3) var(--s-4);
+  border-left: 3px solid var(--c-accent);
+  background: var(--c-callout-bg);
+  color: var(--c-ink);
+}
+
+/* Honeypot — preserve the off-screen pattern exactly. */
 .honeypot {
   position: absolute;
   left: -9999px;
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+
+/* -- Footer ----------------------------------------------- */
+
+body > footer {
+  border-top: var(--rule);
+  padding: var(--s-6) var(--page-pad-x);
+  margin-top: var(--s-9);
+  background: var(--c-paper);
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  color: var(--c-ink-soft);
+}
+body > footer p {
+  max-width: 96rem;
+  margin: 0 auto;
+}
+body > footer p::before {
+  content: "■";
+  display: inline-block;
+  color: var(--c-accent);
+  margin-right: var(--s-2);
+  font-size: 0.7em;
+  transform: translateY(-0.15em);
+}
+
+/* -- Misc helpers ----------------------------------------- */
+
+/* Tabular numerals wherever digits matter — measurements,
+   metrics, ordered lists. */
+.metrics,
+table tbody { font-variant-numeric: tabular-nums; }
+
+/* Reduced motion — neuter all transitions and any animation. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print — strip color UI chrome, keep prose. */
+@media print {
+  body { background: #fff; color: #000; font-size: 11pt; }
+  body > header,
+  body > footer,
+  .skip-link { display: none; }
+  main#main { max-width: none; padding: 0; }
+  a { color: #000; text-decoration: underline; }
+  blockquote, pre { background: transparent; border-color: #000; }
 }
