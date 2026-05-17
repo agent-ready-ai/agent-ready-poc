@@ -8,8 +8,6 @@ A proof-of-concept that an autonomous AI agent — Claude, running inside Claude
 
 | Path | Purpose |
 |---|---|
-| `CLAUDE.md` | Standing orders — conventions, command shortcuts, gotchas |
-| `GOAL.md` | The full mission brief the agent executed against |
 | `Dockerfile` + `docker-compose.yml` | Build environment (Node 22 + arm64 + Chromium + gitleaks + wrangler) |
 | `Makefile` | Entry point for every build/deploy/verify command |
 | `.eleventy.js` | 11ty static site generator config |

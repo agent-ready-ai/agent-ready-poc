@@ -58,7 +58,7 @@ The McKinsey AI adoption surveys identify estimation and quotation as the most-c
 
 ## How this maps to the build of this site
 
-The Multimodal Draft Loop is the same pattern the build agent used on this site. The "draft" was the eleventy scaffold and the placeholder pages; the "estimator-approval step" was the operator-confirmed checkpoint. When the model drafted a contradictory thing — like Node 20 in `GOAL.md` versus wrangler 4.x's requirement — the operator's approval was the override that resolved the conflict in two minutes rather than half a day.
+The Multimodal Draft Loop is the same pattern the build agent used on this site. The "draft" was the eleventy scaffold and the placeholder pages; the "estimator-approval step" was the operator-confirmed checkpoint. When the model drafted a contradictory thing — like a pinned Node version conflicting with wrangler 4.x's runtime requirement — the operator's approval was the override that resolved the conflict in two minutes rather than half a day.
 
 ## Pricing
 

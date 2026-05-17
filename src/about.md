@@ -25,7 +25,7 @@ Cloudflare publishes a third-party scanner ([isitagentready.com](https://isitage
 ## How it was built
 
 - **Tooling:** Docker (only host install), 11ty (static site generator), Cloudflare Pages (hosting + Pages Functions), Cloudflare Registrar (domain), Lighthouse + axe-core + W3C nu validator + gitleaks (verification gates).
-- **Authoring agent:** [Claude](https://www.anthropic.com/claude), built by [Anthropic](https://www.anthropic.com) ([Wikipedia](https://en.wikipedia.org/wiki/Anthropic)). Running inside [Claude Code](https://claude.com/claude-code), Anthropic's coding-agent runtime, executing the `GOAL.md` mission brief.
+- **Authoring agent:** [Claude](https://www.anthropic.com/claude), built by [Anthropic](https://www.anthropic.com) ([Wikipedia](https://en.wikipedia.org/wiki/Anthropic)). Running inside [Claude Code](https://claude.com/claude-code), Anthropic's coding-agent runtime, executing a detailed mission-brief specification.
 - **Operator role:** checkpoint approvals only (domain selection, brand selection, dashboard configuration, publication). No code editing.
 - **Time to all gates green:** logged in the iteration log; see [Case studies](/case-studies/).
 
@@ -55,7 +55,7 @@ These references are reflected as `sameAs` links on the `Person` and publishing 
 
 ## Source
 
-The repository is published at GitHub (link lands here at Checkpoint 7). Every commit is conventional-format; every iteration is annotated-tagged with the gate scores at that iteration; the SDLC and security posture are documented in `CLAUDE.md`, `GOAL.md`, and the README.
+The repository is published at GitHub (link lands here at Checkpoint 7). Every commit is conventional-format; every iteration is annotated-tagged with the gate scores at that iteration; the SDLC and security posture are documented in the README.
 
 ---
 

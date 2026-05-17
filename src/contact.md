@@ -54,7 +54,6 @@ Until then, email is the only inbound channel.
 
 The full repository will be published to GitHub at Checkpoint 7. Once it is, the link lands here and in the README. The repository will include:
 
-- **Spec:** `CLAUDE.md` (standing orders), `GOAL.md` (mission brief)
 - **Build:** `Dockerfile`, `docker-compose.yml`, `Makefile`, `.eleventy.js`, the verification scripts (lighthouse, axe, validate, scan)
 - **Site:** every page on this site, every `_headers` rule, every JSON-LD graph entry
 - **History:** every commit, every iteration tag, every fix branch — un-rewritten
