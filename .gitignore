@@ -8,13 +8,7 @@ dist/
 lighthouse-reports/
 .claude/settings.local.json
 *.log
-GOAL.md
-CLAUDE.md
 
-# Loose token file (not committed; the spec assumes secrets live in .env)
-cf_api_token.txt
-
-# Mailer Worker config — embeds the verified Email Routing destination.
-# Operator copies workers/mailer/wrangler.toml.example to
-# workers/mailer/wrangler.toml locally and fills in the address.
+# Mailer Worker local config. Copy workers/mailer/wrangler.toml.example
+# to workers/mailer/wrangler.toml and fill in your values.
 workers/mailer/wrangler.toml
