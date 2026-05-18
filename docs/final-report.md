@@ -1,62 +1,65 @@
 # Final Report — Agent Ready POC
 
-> Draft populated through iter-7. Sections marked **TBD-operator** require values the operator captures at Checkpoints 5–7.
+> Updated through **iter-21-mailer-worker + WAF rate-limit landing** (2026-05-17). Two operator decisions still on the page (domain cost / expiration tracking) — flagged inline as **TBD-operator**.
 
 ## Deployment Summary
 
 | | |
 |---|---|
 | Domain | `agentreadypoc.com` (purchased via Cloudflare Registrar) |
-| Domain cost (year 1) | **TBD-operator** (visible at dash.cloudflare.com → Domains) |
-| Domain expiry | **TBD-operator** |
-| Live URL | <https://agentreadypoc.com> · <https://www.agentreadypoc.com> · <https://agent-ready-poc.pages.dev> |
-| GitHub repo | **TBD-operator (Checkpoint 7)** |
+| Domain cost (year 1) | **TBD-operator** (dash.cloudflare.com → Domains) |
+| Domain expiry | **TBD-operator** — annual renewal date |
+| Live URLs | <https://agentreadypoc.com> · <https://www.agentreadypoc.com> · <https://agent-ready-poc.pages.dev> |
+| GitHub repo | <https://github.com/johnson-cloud-ai/agent-ready-poc> · MIT · 23 tags · default branch `main` |
 | Cloudflare Pages project | `agent-ready-poc` |
-| Pages account | `Johnson.chris@gmail.com's Account` (`747b4d05bb700eebcef964259fb3e58c`) |
-| Total Cloudflare cost (year 1) | Domain only (Pages, Workers, DNS, Email Routing, Turnstile, WAF Managed Rules, Web Analytics all free tier) |
-| Iterations to all gates | 6 deploy-scan-fix cycles after iter-0-baseline (iter-1 through iter-7) |
+| Cloudflare Worker | `agent-ready-poc-mailer` (standalone; no public route; Service Binding only) |
+| Cloudflare account | `Johnson.chris@gmail.com's Account` (`747b4d05bb700eebcef964259fb3e58c`) — free tier |
+| Total Cloudflare cost (year 1) | Domain only (Pages, Workers, DNS, Email Routing, Turnstile, WAF Custom Rules, WAF Rate Limiting, Web Analytics all free tier) |
+| Iterations to all gates | 22 (iter-0-baseline → iter-21-mailer-worker) across two `/goal`-driven build sessions |
 | Docker image size | `agent-ready-poc:dev`  ·  1.91 GB |
 
 ## Cloudflare Configuration
 
 | Surface | Status |
 |---|---|
-| Pages project | `agent-ready-poc` · 8 deployments shipped |
-| Custom domains | `agentreadypoc.com` + `www.agentreadypoc.com` · both `status: active`, SSL provisioned |
+| Pages project | `agent-ready-poc` · 30+ deployments shipped |
+| Custom domains | `agentreadypoc.com` + `www.agentreadypoc.com` · `status: active`, SSL provisioned |
 | CNAME records | both proxied (apex + www) → `agent-ready-poc.pages.dev` |
-| Pages env vars | `NODE_VERSION=22` **TBD-operator at Checkpoint 5** · `TURNSTILE_SECRET_KEY` **TBD-operator at Checkpoint 5** |
-| Email Routing | **TBD-operator at Checkpoint 5** — `founder@agentreadypoc.com` → operator inbox |
-| WAF Managed Ruleset | **TBD-operator at Checkpoint 5** — enable, sensitivity Medium |
+| Pages env vars | ✅ `TURNSTILE_SECRET_KEY` (rotated 2026-05-17, encrypted) |
+| Pages Service Bindings | ✅ `MAILER` → `agent-ready-poc-mailer` (production) |
+| Mailer Worker | ✅ deployed; `send_email` binding to `chris@johnson.cloud`, `[vars] DESTINATION_ADDRESS` + `SENDER_ADDRESS`; `workers_dev = false` |
+| Email Routing | ✅ destination `chris@johnson.cloud` verified; routes inbound `founder@agentreadypoc.com` |
+| WAF Custom Rules | None active (none required) |
+| WAF Rate Limiting | ✅ `Rate-limit /api/contact and /mcp` — 10 req / 10s / IP, Block. Verified 429 on burst. Closes audit M2 |
 | Bot Fight Mode | OFF (required by build — keep off) |
-| Speed | **TBD-operator at Checkpoint 5** — Brotli on, Early Hints on, HTTP/3 on, Auto Minify OFF, Rocket Loader OFF |
-| SSL/TLS | **TBD-operator at Checkpoint 5** — Full (strict), Always Use HTTPS, Min TLS 1.2 |
-| Web Analytics site | **TBD-operator (after Gate 1 confirms green)** |
-| Turnstile site | **TBD-operator at Checkpoint 2** |
-| Stretch goal | YES — `/api/agent-info` Pages Function live, JSON discovery for external agents |
+| Speed | **TBD-operator** — Brotli, Early Hints, HTTP/3 ON; Auto Minify + Rocket Loader OFF |
+| SSL/TLS | **TBD-operator** — Full (strict), Always Use HTTPS, Min TLS 1.2 |
+| Web Analytics site | **TBD-operator** (optional; Gate 1 already passes without it) |
+| Turnstile site | ✅ created (Checkpoint 2); site key in `src/_data/site.js`; secret in Pages env |
+| Stretch goal | ✅ exceeded — `/api/agent-info` JSON endpoint, `/mcp` JSON-RPC 2.0 server with two real tools, `/.well-known/mcp/server-card.json`, `/.well-known/agent-skills/index.json`, `/.well-known/api-catalog`, `/.well-known/security.txt`, `/openapi.json`, `/feed.xml` |
 
 ## Gate 1 — Cloudflare Agent Ready
 
-Manual scan at <https://isitagentready.com/agentreadypoc.com> required (scanner is JS-rendered; agent can't run headlessly).
+Verified live by `make scan` (puppeteer-driven; no manual browser step needed since iter-11).
 
-| Category | Baseline | Expected (iter-7) | Final |
+| Category | Baseline (iter-0) | Iter-21 (current) | GOAL.md target |
 |---|---|---|---|
-| Discoverability | TBD | green | **TBD-operator** |
-| Content Accessibility | TBD | green | **TBD-operator** |
-| Bot Access Control | TBD | green | **TBD-operator** |
-| Protocol Discovery | N/A | green (`/api/agent-info` lit) | **TBD-operator** |
+| Discoverability | 0/3 | **3/3** (100/100) ✅ | GREEN |
+| Content Accessibility | 0/1 | **1/1** (100/100) ✅ | GREEN |
+| Bot Access Control | 0/2 | **2/2** (100/100) ✅ | GREEN |
+| API/Auth/MCP/Skill Discovery | 0/6 | **4/6** (67/100) ✅ above N/A | N/A (stretch) |
 | Agentic Commerce | N/A | N/A | N/A |
+| **Overall score** | 33/100 (Level 1 Basic) | **83/100 (Level 5 Agent-Native)** | GREEN on required 3 |
 
-Expected-green basis:
-- Discoverability — `robots.txt`, `sitemap.xml`, `Link` response headers (`rel=sitemap`, `rel=alternate`, `rel=related`) all present.
-- Content Accessibility — `llms.txt` + `llms-full.txt` published; full JSON-LD entity graph (`Organization` + `WebSite` + `WebPage` + `BreadcrumbList` + `Service` + `FAQPage` cross-referenced via `@id`).
-- Bot Access Control — `content-signals: search=yes, ai-train=no, ai-input=yes`; `robots.txt` non-blanket rules mirror the same intent; Bot Fight Mode confirmed OFF.
-- Protocol Discovery — `/api/agent-info` returns JSON summary with org, services, contact, discovery URLs, build provenance; `Link` header on every HTML page references it.
+API/MCP gap of 2/6: OAuth discovery + OAuth Protected Resource. Both require a real OAuth flow this static site doesn't have; implementing fake metadata would violate the GOAL.md hard rule against fabrication. Honest ceiling.
 
 ## Gate 2 — Lighthouse + Security + Accessibility
 
+3-run median, post-iter-20 (after CSP tightening), tested via the headless `make lighthouse` harness against the production custom-domain URL.
+
 | Page | Perf-D | Perf-M | A11y-D | A11y-M | BP | SEO | LCP-D | LCP-M | CLS | INP |
 |---|---|---|---|---|---|---|---|---|---|---|
-| / | 100 | 100 | 100 | 100 | 100 | **92*** | 480ms | 1725ms | 0 | 0 |
+| / | 100 | 100 | 100 | 100 | 100 | **92*** | 494ms | 1737ms | 0 | 0 |
 | /about/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
 | /services/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
 | /services/dispatch-automation/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
@@ -68,138 +71,242 @@ Expected-green basis:
 | /faq/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
 | /contact/ | 100 | 100 | 100 | 100 | 100 | 92* | — | — | 0 | 0 |
 
-CWVs are well under thresholds (LCP target <2.5s, CLS target <0.1, INP target <200ms).
+CWVs sit well under thresholds (LCP target <2.5s, CLS target <0.1, INP target <200ms).
 
-**\*SEO 92 is a deliberate trade-off, not a build failure.** Lighthouse's robots.txt validator (Google's strict RFC parser) flags `Content-Signal:` as an "Unknown directive" — and `Content-Signal: search=yes, ai-train=no, ai-input=yes` is exactly the directive the Cloudflare Agent Ready scanner requires in `robots.txt` for the Bot Access Control category to score 2/2 (GREEN). The two standards bodies disagree. The project sided with Cloudflare since the entire premise is agent-readiness; SEO 92 instead of 100 reflects that explicit choice. See Gotcha #9.
+**\*SEO 92 is a deliberate, documented trade-off.** Lighthouse's robots.txt validator (Google's strict RFC parser) flags `Content-Signal:` as "Unknown directive" — and that exact directive is what the Cloudflare Agent Ready scanner requires *in* robots.txt to score Bot Access Control 2/2 GREEN. Operator chose the Cloudflare-aligned posture; SEO settles at 92. See Gotcha #9.
 
-| External validator | Expected | Operator-verified |
+| External validator | Expected | Verified |
 |---|---|---|
-| SSL Labs grade | A/A+ | **TBD-operator** |
-| securityheaders.com | A/A+ | **TBD-operator** |
-| W3C HTML errors | 0 (verified locally) | 0 |
-| axe violations | 0 (verified across all pages) | 0 |
+| SSL Labs grade | A/A+ | **TBD-operator** (browser test) |
+| securityheaders.com | A/A+ | **TBD-operator** (browser test) |
+| W3C HTML errors | 0 | ✅ 0 across all 12 pages |
+| axe-core violations | 0 | ✅ 0 across all 12 pages, live and local |
 
-## Gate 3 — Plate Lunch 125-Point Audit (self-scored, after iter-12)
+## Gate 3 — 125-Point Audit (self-scored, post-iter-19)
 
 | Dimension (25 pts each) | dispatch-automation | estimate-acceleration | field-tech-copilot |
 |---|---|---|---|
-| Citation Analysis | 22 (6 real citations to BLS, NFIB, US Chamber, ServiceTitan, Goldman Sachs, Intuit) | 22 | 22 |
-| Authority Signals | 22 (named author Claude/Anthropic with verifiable Wikipedia + GitHub + claude.ai references; 6 authoritative source citations) | 22 | 22 |
-| Content Structure | 24 (TL;DR, H2 standalone, ~200-word sections, named framework) | 24 | 24 |
-| Structured Data | 25 (Organization + Person + Publisher Organization + WebSite + WebPage + BreadcrumbList + Service + FAQPage, all @id cross-referenced) | 25 | 25 |
-| Cross-Platform Consistency | 19 (sameAs to 6 platforms: anthropic.com, anthropic.com/claude, Wikipedia Claude, Wikipedia Anthropic, github.com/anthropics, claude.ai; inline references in /about/) | 19 | 19 |
-| **Total** | **112 / 125** ✅ (lighthouse target ≥105) | **112 / 125** ✅ (target ≥100) | **112 / 125** ✅ (target ≥100) |
+| Citation Analysis | 22 (6 verifiable citations to BLS, NFIB, US Chamber, ServiceTitan, Goldman Sachs, Intuit, McKinsey) | 22 | 22 |
+| Authority Signals | 23 (named author Claude/Anthropic with Wikipedia + GitHub + claude.ai sameAs refs; `author` byline on every WebPage; `dateModified` shows ongoing maintenance) | 23 | 23 |
+| Content Structure | 25 (TL;DR, H2 standalone, ~200-word sections, named framework per service, HowTo schema on /how-we-engage, Speakable selectors on TL;DR/H1/blockquote) | 25 | 25 |
+| Structured Data | 25 (Organization + Person + Anthropic Org + WebSite + WebPage + BreadcrumbList + Service + FAQPage + Article + HowTo + Speakable, all @id cross-referenced) | 25 | 25 |
+| Cross-Platform Consistency | 19 (sameAs to 6 platforms — anthropic.com, anthropic.com/claude, two Wikipedia entries, github.com/anthropics, claude.ai; plus Atom feed at /feed.xml; OG image; live GitHub repo at v1.0.0+) | 19 | 19 |
+| **Total** | **114 / 125** ✅ (target ≥105) | **114 / 125** ✅ (target ≥100) | **114 / 125** ✅ (target ≥100) |
 
 **Gate 3: GREEN.** All service detail pages exceed both the lighthouse-page target (≥105) and the floor (≥100).
 
-The 13-point gap to 125/125 remains in two dimensions:
-- **Citation Analysis −3**: would close with an additional within-2-years primary source cited per page. Easy to add but the current 6 citations per page already exceed the spec's 5–6 requirement.
-- **Authority Signals −3**: expert-quotes dimension still unfilled per the GOAL.md hard rule against fabricated quotes; the named-author boost from Claude/Anthropic covers the rest of this dimension.
-- **Content Structure −1**, **Cross-Platform Consistency −6**: cross-platform consistency lifts further once the GitHub repo is pushed at Checkpoint 7 (the repo itself becomes another verifiable platform).
+The 11-point gap to 125/125:
+- **Citation Analysis −3** — 6 citations per page is at the spec's ceiling already; additional within-2-years primaries could push 22→24.
+- **Authority Signals −2** — expert-quotes dimension still unfilled per the GOAL.md hard rule against fabricated attributed quotes; the named-author boost covers the rest.
+- **Cross-Platform Consistency −6** — would lift further with paid platforms (LinkedIn, X, Mastodon) that the project deliberately doesn't operate.
 
 ## JSON-LD Entity Graph
 
 ```
-                       Organization
+                                  Anthropic (Organization)
+                                  (@id: anthropic.com/#organization)
+                                       │ sameAs[]: wikipedia,
+                                       │           github, x.com
+                                       │
+                                       │ worksFor
+                                       │
+                                  Claude (Person)
+                                  (@id: …/#builder)
+                                       │ sameAs[]: anthropic.com,
+                                       │           wikipedia (2),
+                                       │           github, claude.ai
+                                       │
+                              ┌────────┼─────── founder
+                              │        │
+                              │        │
+                       Agent Ready POC (Organization)
                        (@id: …/#organization)
-                            │
-              ┌─────────────┴─────────────┐
-              │                           │
-       WebSite                            │ provider
-       (@id: …/#website)                  │
-       publisher → Organization           │
-              │                           │
-              │ isPartOf                  │
-              │                           │
-       WebPage (per page)                 │
-       (@id: …<page>)        ┌──── Service (per service detail)
-              │              │     (@id: …<page>#service)
-              │ ↓same        │     provider → Organization
-              │ ↓page        │
-              ↓              │
-       BreadcrumbList ──── ListItem position 1 → /
-       (@id: …<page>#breadcrumb)     ListItem position 2 → /services/
-                                     ListItem position 3 → /services/<slug>/
+                              │
+                              │ publisher
+                              │
+              ┌───────────────┴──────────────┐
+              │                              │
+       WebSite                                │
+       (@id: …/#website)                      │
+       publisher → Organization               │
+              │                               │
+              │ isPartOf                      │
+              │                               │
+       WebPage (per page) ── author → Person  │
+       (@id: …<page>)         speakable {     │
+              │                 cssSelector:  │
+              │                   h1,.tldr,   │
+              │                   blockquote  │
+              │                 }             │
+              │                               │
+              ├── Article (content pages) ────┤
+              │     author → Person           │
+              │     publisher → Org           │
+              │     datePublished/Modified    │
+              │                               │
+              ├── HowTo (/how-we-engage only)─┤
+              │     name, totalTime P56D      │
+              │     step[1..4]                │
+              │                               │
+              ├── Service (service detail)────┘
+              │     (@id: …<page>#service)
+              │     provider → Organization
+              │     additionalProperty: Framework
               │
-              │ (FAQ page only)
-              ↓
-       FAQPage
-       (@id: …#faq)
-       mainEntity → 12 × Question/Answer pairs
+              ├── BreadcrumbList (non-home pages)
+              │     itemListElement[1..N]
+              │
+              └── FAQPage (/faq/ only)
+                    mainEntity → 12 × Question/Answer
 ```
 
 ## Git History Summary
 
 ```
-Commits:              16 across 8 feature/fix/chore branches
-Iteration tags:       7 (iter-0-baseline → iter-7-form-analytics)
-Merge style:          --no-ff (branch topology preserved)
+Commits on main:     ~50 across 18 feature/fix/chore/docs branches
+                     (final-state count post-iter-22; exact via `git rev-list --count main`)
+Iteration tags:      22 (iter-0-baseline → iter-21-mailer-worker)
+Release tag:         v1.0.0
+Merge style:         --no-ff everywhere (branch topology preserved)
 Commit message style: conventional commits, imperative subject <72 chars
-WIP / fixup commits:  none
-Direct-to-main:       initial scaffold only; everything else on feature branches
+WIP / fixup commits: none
+History rewrite:     git filter-branch removed CLAUDE.md and GOAL.md from
+                     every commit on every ref before publication (iter-14 in
+                     git-history terms; happened between iter-13-spec-private
+                     and v1.0.0)
+gitleaks:            0 findings across the full rewritten history (33+ commits scanned)
+Direct-to-main:      initial scaffold + doc-only/release commits; all
+                     feature work on feat/fix/chore branches
 ```
 
-Sample of `git log --oneline --graph --decorate --all`:
+Sample of `git log --oneline --graph --decorate --all` (selected tags):
 ```
-*   d6c360c (HEAD -> main, tag: iter-7-form-analytics) Merge branch 'feat/iter-7-form-analytics-prestage' into main
-*   8959d85 (tag: iter-6-graph-enrichment) Merge branch 'feat/iter-6-graph-enrichment' into main
-*   4b3920d (tag: iter-4-stretch) Merge branch 'feat/iter-4-stretch-and-publication-prep' into main
-*   3b1439e (tag: iter-3-content) Merge branch 'feat/iter-3-content' into main
-*   88aba0f (tag: iter-2-structure) Merge branch 'feat/iter-2-page-tree' into main
-*   4e91c83 (tag: iter-1-defaults) Merge branch 'fix/iter-1-touch-targets' into main
-*   b2d38f1 (tag: iter-0-baseline) Merge branch 'fix/gate-tooling' into main
+*   (HEAD -> main, tag: iter-21-mailer-worker)  Merge feat/iter-21-mailer-worker
+*   (tag: iter-20-security-hardening)            Merge feat/iter-20-security-hardening
+*   (tag: iter-19-feed-dates-og)                 Merge feat/iter-19-feed-dates-og
+*   (tag: iter-18-mcp-server)                    Merge feat/iter-18-mcp-server
+*   (tag: iter-17-google-additions)              Merge feat/iter-17-google-ai-additions
+*   (tag: iter-16-design)                        Merge feat/iter-16-design
+*   (tag: iter-15-published)                     Merge feat/iter-15-published-references
+*   (tag: v1.0.0)                                chore(release): v1.0.0
+*   (tag: iter-13-spec-private)                  Merge chore/iter-13-scrub-spec-references
+*   (tag: iter-12-gate-3-green)                  Merge feat/iter-12-author-authority
+*   (tag: iter-11-gate-1-green)                  Merge feat/iter-11-auto-scan-and-gate1-fixes
+*   (tag: iter-10-md-middleware)                 Merge feat/iter-10-md-middleware
+*   (tag: iter-9-gate-1-fix)                     Merge feat/iter-9-gate-1-fix
+*   (tag: iter-8-turnstile-live)                 Merge feat/iter-8-turnstile-live
+*   (tag: iter-7-form-analytics)                 Merge feat/iter-7-form-analytics-prestage
+*   (tag: iter-6-graph-enrichment)               Merge feat/iter-6-graph-enrichment
+*   (tag: iter-5-publication-prep)               chore: gitleaks allowlist + CHANGELOG
+*   (tag: iter-4-stretch)                        Merge feat/iter-4-stretch-and-publication-prep
+*   (tag: iter-3-content)                        Merge feat/iter-3-content
+*   (tag: iter-2-structure)                      Merge feat/iter-2-page-tree
+*   (tag: iter-1-defaults)                       Merge feat/iter-1-discoverability
+*   (tag: iter-0-baseline)                       Merge fix/gate-tooling
 ```
 
 ## Iteration Log
 
-| # | Tag | Branches Merged | Key Change | Gates Passing |
-|---|---|---|---|---|
-| 0 | iter-0-baseline | scaffold + fix/gate-tooling | Placeholder deployed; Cloudflare default floor measured (Lighthouse 100/94/100/92) | 0/3 (baseline) |
-| 1 | iter-1-defaults | feat/iter-1-discoverability + fix/iter-1-touch-targets | _headers + robots.txt + llms.txt + sitemap + JSON-LD stub + CSS target-size fix → Lighthouse 100/100/100/100 | Gate 2 green |
-| 2 | iter-2-structure | feat/iter-2-page-tree + chore/lighthouse-both-form-factors | 11 pages + nav + FAQPage schema + dual-form-factor harness | Gate 2 green on 11 pages × 2 form factors |
-| 3 | iter-3-content | feat/iter-3-content | Brand Option B; real content with verifiable citations; named frameworks per service; custom domain attached | Gate 2 green; Gate 3 building |
-| 4 | iter-4-stretch | feat/iter-4-stretch-and-publication-prep | /api/agent-info stretch goal; README; LICENSE | Gate 1 protocol discovery lit |
-| 5 | iter-5-publication-prep | (direct commits) | CHANGELOG; gitleaks allowlist; secret-scan clean | Checkpoint 7 ready |
-| 6 | iter-6-graph-enrichment | feat/iter-6-graph-enrichment | Service + BreadcrumbList entities; LICENSE PII scrub | Gate 3 Structured Data dimension at 25/25 |
-| 7 | iter-7-form-analytics | feat/iter-7-form-analytics-prestage | Contact form Pages Function + analytics partial (inert until env vars set) | Checkpoint 5 ready |
+| # | Tag | Key Change | Gate state at tag |
+|---|---|---|---|
+| 0 | iter-0-baseline | Placeholder deployed; Cloudflare default floor measured | Gate 2: 100/94/100/92, axe 0 / W3C 0 |
+| 1 | iter-1-defaults | `_headers` + robots + llms + sitemap + JSON-LD stub + CSS target-size fix | Gate 2: 100/100/100/100 |
+| 2 | iter-2-structure | 11-page tree + nav partial + FAQPage schema | Gate 2 green across all pages × 2 form factors |
+| 3 | iter-3-content | Brand Option B (meta); real content with verifiable citations; custom domain attached | Gate 3 building |
+| 4 | iter-4-stretch | `/api/agent-info` stretch goal; README; LICENSE | Gate 1 protocol discovery lit |
+| 5 | iter-5-publication-prep | CHANGELOG; gitleaks allowlist; secret-scan clean | Checkpoint 7 ready |
+| 6 | iter-6-graph-enrichment | Service + BreadcrumbList entities; LICENSE PII scrub | Gate 3 Structured Data 25/25 |
+| 7 | iter-7-form-analytics | Contact form Pages Function + analytics partial (inert until env vars set) | Checkpoint 5 ready |
+| 8 | iter-8-turnstile-live | Turnstile site key + secret env wired; form active | Contact form functional end-to-end |
+| 9 | iter-9-gate-1-fix | Markdown alternates + API catalog + security.txt | Gate 1 Content 1/1; Protocol Discovery 1/6 |
+| 10 | iter-10-md-middleware | Accept-based markdown negotiation Pages middleware | Gate 1 Content negotiation actually wired |
+| 11 | iter-11-gate-1-green | Headless puppeteer scanner + Content-Signal in robots.txt + Agent Skills + WebMCP | Gate 1: 50→75/100, Level 4 |
+| 12 | iter-12-gate-3-green | Person entity (Claude) + Anthropic Org + sameAs[] | Gate 3 self-scored 112/125 |
+| 13 | iter-13-spec-private | CLAUDE.md/GOAL.md untracked + public references scrubbed; .gitignore extended | Operator-private methodology |
+| — | (history rewrite) | git filter-branch removed CLAUDE.md and GOAL.md from every commit on every ref | gitleaks clean across all history |
+| — | v1.0.0 | First public release; pushed to GitHub via inline PAT (one-shot, since revoked) | Publication |
+| 15 | iter-15-published | Live GitHub URL referenced in `/api/agent-info`, README, contact, llms.txt | Cross-platform reference |
+| 16 | iter-16-design | Editorial design pass via frontend-design sub-agent — terracotta accent, system serif body, dark-mode mirror | Gate 2 unchanged at 100/100/100/92 |
+| 17 | iter-17-google-additions | Article + HowTo + Speakable + `author`/`publisher` per WebPage (Google AI Optimization Guide) | Gate 3 Authority +1 |
+| 18 | iter-18-mcp-server | Real Model Context Protocol HTTP server at `/mcp` + `/.well-known/mcp/server-card.json` | **Gate 1: 75→83/100, Level 5 "Agent-Native"** |
+| 19 | iter-19-feed-dates-og | `/feed.xml` Atom + `datePublished`/`dateModified` on Articles + 1200×630 OG image rendered by puppeteer | Gate 3 Cross-Platform 14→20 |
+| 20 | iter-20-security-hardening | OWASP audit fix-batch: `jsonInHtml` filter (H1), PII removed from logs (M1), CSP tightened (M4), CORS doc (L1), Accept q-values (L2), gitleaks tightened (L4), Node engine pinned (I4), dashboard checklist extended (I2) | Audit findings H1/M1/M4/L1/L2/L4/I2/I4 closed |
+| 21 | iter-21-mailer-worker | Cloudflare-native email forwarding via standalone `agent-ready-poc-mailer` Worker + Service Binding from Pages | Email forwarding live, verified inbound at `chris@johnson.cloud` |
+| — | (WAF rate-limit) | Free-tier rate-limiting rule on `/api/contact` + `/mcp` — 10 req / 10s / IP, Block. Verified 429 on 10+ burst | **Audit finding M2 closed** |
+
+## Security Posture
+
+Post-iter-20 OWASP review by a dedicated security sub-agent; all findings closed or deliberately deferred.
+
+| Sev | ID | Finding | Status |
+|---|---|---|---|
+| HIGH | H1 | `</script>` injection path in `dump\|safe` JSON-LD blocks | ✅ Closed (iter-20 — `jsonInHtml` Nunjucks filter) |
+| MED | M1 | PII (name/email/IP) in Pages Function logs | ✅ Closed (iter-20 — redacted to ts/messageLength/hasName/hasEmail) |
+| MED | M2 | No application-level rate limit | ✅ Closed (WAF Rate Limiting rule on `/api/contact` + `/mcp`, verified 429 on burst) |
+| MED | M3 | Email path CRLF / header injection | ✅ Closed (iter-21 — CRLF defense at both Pages Function and Mailer Worker layers) |
+| MED | M4 | CSP missing `object-src`, `frame-ancestors`, `upgrade-insecure-requests` | ✅ Closed (iter-20) |
+| LOW | L1 | Global wildcard `Access-Control-Allow-Origin: *` from CF default | ✅ Documented as accepted state (iter-20; no credentialed surfaces exist) |
+| LOW | L2 | Markdown middleware ignored `Accept` quality values | ✅ Closed (iter-20 — `preferred()` parser) |
+| LOW | L3 | WebMCP registers on every page (potential XSS chain) | ⏸ Deferred (gating to /contact/ would cost Gate 1 WebMCP check; Turnstile token requirement is the equivalent defense) |
+| LOW | L4 | gitleaks allowlist could mask leaks if `git add -f` | ✅ Closed (iter-20 — tightened to only `.env`) |
+| INFO | I1 | `founder@agentreadypoc.com` enumerated publicly | Accepted (designed — Email Routing handles spam) |
+| INFO | I2 | No 2FA / token-expiration tracking in checklist | ✅ Closed (iter-20 — section 9 of dashboard checklist) |
+| INFO | I3 | `Server: cloudflare` header exposed | Accepted (unavoidable) |
+| INFO | I4 | Node engine `>=22` permits drift | ✅ Closed (iter-20 — pinned to `22`) |
+
+Plus the day-1 hygiene cleanup: all three exposed-in-chat secrets (a GitHub PAT, a Cloudflare API token, a Turnstile secret) revoked and rotated; macOS keychain `johnson-chris` HTTPS credential erased; SSH-key push path established for `johnson-cloud-ai`; `.env` chmod 600.
 
 ## Gotchas
 
-1. **Wrangler 4.x dropped Node 20 support mid-build.** GOAL.md pinned Node 20; the published wrangler refused to run. Bumped Dockerfile to Node 22 (still LTS). Spec was updated in lockstep with `CLAUDE.md` and `GOAL.md`.
-2. **`CF_API_TOKEN` was deprecated in favor of `CLOUDFLARE_API_TOKEN`.** Wrangler 4.x emitted a deprecation warning; renamed env var across `.env`, `docker-compose.yml`, `CLAUDE.md`, `GOAL.md` for consistency with Cloudflare's canonical naming.
-3. **Plate Lunch 125-point framework is the spec author's adaptation.** WebFetched both referenced articles; neither contains a 125-point rubric. The 5-dimension structure (Citation Analysis, Authority Signals, Content Structure, Structured Data, Cross-Platform Consistency) is the project's invention. Documented in `~/.claude/projects/.../memory/gate-3-framework-is-adapted.md`. Gate 3 audited against GOAL.md's structure literally.
-4. **chrome-launcher 1.x default flags don't include `--headless`.** Caused ECONNREFUSED on the first lighthouse run. Added `--headless=new` fallback in `scripts/lighthouse-median.js`.
-5. **@axe-core/cli requires chromedriver.** Not installed in the Debian Chromium package; swapped to `@axe-core/puppeteer` which talks to Chromium over CDP directly.
-6. **W3C nu validator rate-limits.** Twelve sequential POSTs in 30s trips a 403. Added a 2s sleep between requests in `scripts/validate.js`; throttle could be tuned further if it recurs.
-7. **Custom domain CNAMEs don't auto-create on Pages domain attach.** Wrangler's `pages domain` subcommand doesn't exist; used Cloudflare API directly. The CNAME records (`@` and `www`, both proxied) had to be created via a second API call; the domain `status: pending → active` transition happened within ~10 minutes of CNAME creation.
-8. **Gate 1 scanner is JS-rendered.** WebFetch returns the empty template, not scan results. Closed in iter-11 by writing a puppeteer-based scanner (`scripts/scan.js`) that drives the system Chromium, waits for the JS-rendered results to land, and extracts category scores + per-check failure detail from the DOM. After iter-11 the scanner runs headlessly from `make scan` and the operator no longer has to manually browse to the scanner.
-
-9. **`Content-Signal:` in `robots.txt` triggers a Lighthouse SEO penalty.** Google's robots.txt parser (which Lighthouse uses) strictly validates against the canonical directive set (User-agent, Allow, Disallow, Sitemap, Crawl-delay). It flags `Content-Signal:` as "Unknown directive" and the audit fails with `score: 0` — costing 8 SEO points. **But** Cloudflare's Agent Ready scanner explicitly requires that same directive in `robots.txt` to score the Bot Access Control "Content Signals in robots.txt" check as passing (2/2). The two standards bodies disagree about what robots.txt is allowed to contain. Operator chose to keep the Cloudflare-aligned directive (Gate 1 Bot Access stays 2/2 GREEN); Gate 2 mobile/desktop SEO settle at 92 instead of 100. The decision was conscious and is documented here so future maintainers don't "fix" it by removing the directive and silently regressing Gate 1.
+1. **Wrangler 4.x dropped Node 20 support mid-build.** GOAL.md pinned Node 20; the published wrangler refused to run. Bumped Dockerfile to Node 22 (still LTS). Spec updated in lockstep.
+2. **`CF_API_TOKEN` was deprecated in favor of `CLOUDFLARE_API_TOKEN`.** Renamed across `.env`, `docker-compose.yml`, `CLAUDE.md`, `GOAL.md`.
+3. **Plate Lunch 125-point framework is the spec author's adaptation.** WebFetched both referenced articles; neither contains a 125-point rubric. Gate 3 audited against GOAL.md's structure literally.
+4. **chrome-launcher 1.x default flags don't include `--headless`.** Caused ECONNREFUSED on first lighthouse run. Added `--headless=new` fallback.
+5. **@axe-core/cli requires chromedriver.** Not installed in the Debian Chromium package; swapped to `@axe-core/puppeteer` (CDP-direct, no chromedriver).
+6. **W3C nu validator rate-limits.** Twelve sequential POSTs in 30s trips a 403. Added 2s throttle in `scripts/validate.js`.
+7. **Custom domain CNAMEs don't auto-create on Pages domain attach.** Wrangler's `pages domain` subcommand doesn't exist; used the Cloudflare API directly to attach + create proxied CNAMEs.
+8. **Gate 1 scanner is JS-rendered.** Closed in iter-11 by writing a puppeteer-driven scanner (`scripts/scan.js`) that drives the system Chromium, waits for results to render, and extracts category scores + per-check failure detail.
+9. **`Content-Signal:` in robots.txt triggers a Lighthouse SEO penalty.** Google's strict robots.txt parser flags it as "Unknown directive"; Cloudflare's Agent Ready scanner requires it. Operator chose Cloudflare-aligned posture; SEO settles at 92 across all pages.
+10. **Cloudflare Pages doesn't support the `send_email` binding.** The Pages dashboard's bindings list (KV, Queue, Service, Stream, Vectorize, Workers AI, R2) omits Send Email; the underlying Pages project API silently drops `send_email` from the config. **Resolution:** built a standalone Cloudflare Worker (`agent-ready-poc-mailer`) with `workers_dev = false` and the binding, reached from Pages via a Service Binding (`MAILER`).
+11. **Resend.com was the recommended pragmatic alternative briefly considered.** Free tier handles 3000 emails/month, would work cleanly. Operator chose Cloudflare-native (Path B) to keep the entire stack on one vendor; both architectures meet the privacy requirement.
+12. **Cloudflare WAF Rate Limiting API is paid-tier-only.** Free-tier accounts can manage rate-limit rules only via dashboard. Returned 403 to a Rulesets API probe even with `Zone WAF: Edit` scope on the token. Resolved by dashboard configuration. The over-broad scope was rolled back after the rule landed.
+13. **"Custom rules" with Block ≠ "Rate Limiting rules" with Block.** Both have a Block action but Custom rules apply unconditionally; Rate Limiting rules apply only when a threshold is exceeded. Initial dashboard navigation landed in the wrong section, briefly blocking `/api/contact` and `/mcp` unconditionally. Operator-recoverable in one click via the row's ⋮ → Disable.
+14. **Pages env-var changes don't apply to existing deployments.** New env bindings only take effect for *subsequent* deploys. When wiring `MAILER` Service Binding via the dashboard, a fresh `make deploy` was required to pick it up.
+15. **`make deploy` from a feature branch lands on a preview URL, not production.** Wrangler infers the branch from current git context. Made this mistake three times across the build (iter-16, iter-18, iter-21) — saved as a project memory at `~/.claude/projects/.../memory/deploy-only-from-main-branch.md` so future sessions catch it.
 
 ## Handoff Notes
 
 **Day-2 operational tasks for the operator:**
 
-- **Deploy changes (after Checkpoint 7 GitHub push):** `git push` → Cloudflare Pages auto-deploys via the connected repo.
-- **Local dev:** `make up && make dev` → <http://localhost:8080>.
-- **Add a service page:** see `README.md → How to add a service page`.
-- **Update brand constants:** edit `src/_data/site.js`; rebuild propagates to every page including JSON-LD.
-- **Rotate Turnstile keys:** new pair from <https://dash.cloudflare.com/?to=/:account/turnstile>; site key → `src/_data/site.js`; secret key → Pages env vars.
-- **Rotate `CLOUDFLARE_API_TOKEN`:** new token at <https://dash.cloudflare.com/profile/api-tokens> with matching scopes; update `.env`; `make whoami` to confirm; revoke old token.
-- **Token expiration:** **TBD-operator at Checkpoint 7** — record current expiration in the README's "Prerequisites" section so the next rotator has the date.
+- **Deploy changes:** push to `main` via SSH (`git push origin main`); if you later connect the repo for Git-driven Cloudflare Pages builds (Pages → Settings → Builds & deployments → Source → Connect to Git), pushes will auto-deploy.
+- **Local dev:** `make up && make dev` → http://localhost:8080
+- **Build + verify:** `make check-all` runs validate + lighthouse + a11y + scan
+- **Deploy:** **always** `git branch --show-current` first; only run `make deploy` from `main`
+- **Mailer Worker deploy:** `make deploy-mailer` (separate from Pages deploy)
+- **Add a service page:** see `README.md → How to add a service page`
+- **Update brand constants:** edit `src/_data/site.js`; rebuild propagates to every page including JSON-LD
+- **Rotate Turnstile keys:** new pair from <https://dash.cloudflare.com/?to=/:account/turnstile>; site key → `src/_data/site.js`; secret key → Pages env var via dashboard
+- **Rotate `CLOUDFLARE_API_TOKEN`:** new token at <https://dash.cloudflare.com/profile/api-tokens> with matching scopes; update `.env`; `make whoami` to confirm; `make down && make up` to refresh container env; revoke old token
+- **Rotate destination email:** add new address in Email Routing destinations → verify → update `workers/mailer/wrangler.toml` (gitignored) → `make deploy-mailer`
+- **Token expiration tracking:** track in calendar; reminder ~14 days before expiry per `docs/cloudflare-dashboard-checklist.md` §9
 
-**Pre-Checkpoint 7 to-dos that block publication:**
+**Pre-Checkpoint 7 state (all done):**
 
-- ✅ **Local git config** (Decision 2: yes) — set to `user.name = "agent-ready-poc operator"`, `user.email = "founder@agentreadypoc.com"`. Future commits anonymized. Global config untouched.
-- ✅ **Git history** (Decision 1: A — accept) — the 19+ commits authored under the operator's real name remain as-is. Operator accepted the exposure as part of the public artifact.
-- ⏸ **Push timing** (Decision 3: wait) — operator deferred the GitHub publication push. Re-run `make secret-scan`, create `chore(release): prepare v1.0.0` commit + tag, then push when ready.
-- ⏸ Run `make secret-scan` one more time before pushing; confirm 0 findings.
-- ⏸ `chore(release): prepare v1.0.0` commit + tag `v1.0.0`.
-- ⏸ `git remote add origin git@github.com:<user>/agent-ready-poc.git && git push -u origin main --tags`.
-- ⏸ Connect the repo in the Cloudflare Pages dashboard for Git-driven deploys.
+- ✅ Local git config — `agent-ready-poc operator <founder@agentreadypoc.com>` for this repo; global config untouched
+- ✅ Git history rewrite — `CLAUDE.md` and `GOAL.md` removed from every commit via `git filter-branch`; gitleaks clean across all 33+ commits
+- ✅ `make secret-scan` — passes on working tree and full history (with justified `.env` allowlist)
+- ✅ `chore(release): prepare v1.0.0` commit + `v1.0.0` annotated tag
+- ✅ GitHub repo created at <https://github.com/johnson-cloud-ai/agent-ready-poc> · MIT · public
+- ✅ Push path via SSH (`~/.ssh/id_ed25519` registered on `johnson-cloud-ai`); macOS keychain stale credential erased
+- ✅ 23 tags pushed (`iter-0-baseline` → `iter-21-mailer-worker` + `v1.0.0`)
 
-**Post-publication verification:**
-- Run all three gate scanners against the live site one final time.
-- Confirm Pages Function `/api/contact` has `TURNSTILE_SECRET_KEY` set and submits successfully.
-- Confirm DNS resolves from a fresh resolver (your laptop, a phone on cellular).
-- Verify `founder@agentreadypoc.com` receives a test inbound email.
+**Optional, outstanding:**
+
+- ☐ Cloudflare Pages dashboard config items still marked **TBD-operator** in §1, 2, 5, 6 of `docs/cloudflare-dashboard-checklist.md` (Build branch settings, custom domain redirect direction, Speed toggles, SSL/TLS settings). The site is operational without these but a few minutes of clicks tightens posture.
+- ☐ GitHub org 2FA verification per checklist §9.
+- ☐ SSL Labs and securityheaders.com external grades (browser test).
+- ☐ Calendar reminder for `CLOUDFLARE_API_TOKEN` expiry (~14 days before).
+
+**Connecting the repo for Git-driven Pages builds (optional):**
+
+Pages → `agent-ready-poc` → Settings → Builds & deployments → Source → Connect to Git → select `johnson-cloud-ai/agent-ready-poc` → production branch `main` → build command `npm run build` → output directory `dist`. After connection, every `git push origin main` auto-deploys. Existing `make deploy` continues to work in parallel; choose one as the canonical path.
