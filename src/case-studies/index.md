@@ -7,7 +7,7 @@ article: true
 
 # Case study: the build of this site
 
-> **TL;DR** — Across two `/goal`-driven work sessions, an autonomous AI agent (Claude, running inside Claude Code) shipped this site end-to-end: Cloudflare hosting, custom domain, Turnstile-protected contact form with native Cloudflare email forwarding, an MCP server, twelve pages of real content with verifiable citations, three independent quality gates passing, an OWASP security review concluded. **One human made eight high-judgment decisions; the agent did everything else.** The full git history — 22 annotated iteration tags plus `v1.0.0` — is public at [`github.com/johnson-cloud-ai/agent-ready-poc`](https://github.com/johnson-cloud-ai/agent-ready-poc).
+> **TL;DR** — Across two `/goal`-driven work sessions, an autonomous AI agent (Claude, running inside Claude Code) shipped this site end-to-end: Cloudflare hosting, custom domain, Turnstile-protected contact form with native Cloudflare email forwarding, an MCP server, twelve pages of real content with verifiable citations, three independent quality gates passing, an OWASP security review concluded. One human made eight high-judgment decisions; the agent did everything else. The full git history — 22 annotated iteration tags plus `v1.0.0` — is public at [`github.com/agent-ready-ai/agent-ready-poc`](https://github.com/agent-ready-ai/agent-ready-poc).
 
 This is a case study about the way it was built more than the thing that was built. The thing is described elsewhere — on [Services](/services/), on [About](/about/), on [How we engage](/how-we-engage/). This page is about the *process*: what an operator actually had to do, where the agent chose not to take shortcuts, what was honestly hard, and what shipped at the end.
 
@@ -44,7 +44,7 @@ The build plan explicitly forbade this:
 >
 > **No invented credentials at named real companies.** "Former VP at Google" is forbidden. Generic plausible backgrounds are fine.
 
-The agent honored these. The result is a Gate 3 score of 114/125 instead of 125/125 — the three lost points are the "attributed expert quotes" dimension where genuine third-party quotes weren't available and fabrication was off the table. The result is also a Gate 1 score of 83/100 (Level 5 "Agent-Native") instead of 100 — the missing 17 are OAuth discovery, OAuth Protected Resource, and one MCP discovery variant, all of which would have required publishing metadata for services this static site doesn't actually run. Those gaps are documented in the [final report](https://github.com/johnson-cloud-ai/agent-ready-poc/blob/main/docs/final-report.md) as deliberate choices, not oversights.
+The agent honored these. The result is a Gate 3 score of 114/125 instead of 125/125 — the three lost points are the "attributed expert quotes" dimension where genuine third-party quotes weren't available and fabrication was off the table. The result is also a Gate 1 score of 83/100 (Level 5 "Agent-Native") instead of 100 — the missing 17 are OAuth discovery, OAuth Protected Resource, and one MCP discovery variant, all of which would have required publishing metadata for services this static site doesn't actually run. Those gaps are deliberate choices, not oversights — the annotated tag messages at the iterations where each was considered explain the trade-off.
 
 There's a second category of honest constraint: when standards bodies disagreed. Cloudflare's Agent Ready scanner wants a `Content-Signal:` directive *inside* `robots.txt`. Google's robots.txt validator (which Lighthouse uses) flags that same directive as "Unknown" and penalizes the SEO score eight points. The agent surfaced the conflict; the operator chose the Cloudflare-aligned posture; SEO settles at 92 across every page, and a project memory was saved so future maintainers don't "fix" it by removing the directive and silently regressing Gate 1.
 
@@ -62,15 +62,13 @@ The site is its own demo.
 | **Gate 2** — Lighthouse + axe-core + W3C HTML validator | Perf/A11y/BP/SEO ≥95 desktop, ≥90 mobile | 100/100/100/92 on every page × both form factors; 0 axe violations; 0 W3C errors; LCP under 500ms desktop, under 1800ms mobile; CLS 0; INP 0 |
 | **Gate 3** — 125-point content audit | At least one service page ≥105; others ≥100 | 114/125 on every service page |
 
-Gate verification is itself automated — the headless [`make scan`](https://github.com/johnson-cloud-ai/agent-ready-poc/blob/main/scripts/scan.js) script drives Chromium against `isitagentready.com`, waits for the JS-rendered results, and extracts category scores plus per-check failure detail. No manual browser step.
+Gate verification is itself automated — the headless [`make scan`](https://github.com/agent-ready-ai/agent-ready-poc/blob/main/scripts/scan.js) script drives Chromium against `isitagentready.com`, waits for the JS-rendered results, and extracts category scores plus per-check failure detail. No manual browser step.
 
 ## Security posture
 
-After the third quality gate landed, a dedicated security sub-agent ran an OWASP Top 10 audit against the live application. Findings: one HIGH, four MEDIUM, four LOW, four INFORMATIONAL. **Ten closed, one deliberately deferred with documented rationale, two accepted as unavoidable Cloudflare fingerprint.** The deferred item (gating WebMCP tool registration to a single page) would have cost the Gate 1 WebMCP scanner check while only marginally reducing an attack surface that Turnstile-token requirement already covers; the operator and agent agreed it wasn't worth the trade.
+After the third quality gate landed, a dedicated security sub-agent ran an OWASP Top 10 audit against the live application. Findings: one HIGH, four MEDIUM, four LOW, four INFORMATIONAL. Ten closed, one deliberately deferred with documented rationale, two accepted as unavoidable Cloudflare fingerprint. The deferred item (gating WebMCP tool registration to a single page) would have cost the Gate 1 WebMCP scanner check while only marginally reducing an attack surface that Turnstile-token requirement already covers; the operator and agent agreed it wasn't worth the trade.
 
-Beyond the audit findings, the build did its own operational hygiene: every secret that touched the chat history during development was rotated or revoked; macOS keychain credentials for the prior identity were erased; the `.env` file is `chmod 600`; the `johnson-cloud-ai` GitHub account is push-authenticated by an SSH key (not a personal access token); the git history was rewritten with `git filter-branch` to remove the project's standing-orders documents from every commit on every ref before publication, and `gitleaks detect --log-opts="--all"` returns zero findings across the resulting clean history.
-
-The full audit table and resolution notes are in the [final report](https://github.com/johnson-cloud-ai/agent-ready-poc/blob/main/docs/final-report.md#security-posture).
+Beyond the audit findings, the build did its own operational hygiene: every secret that touched the chat history during development was rotated or revoked; macOS keychain credentials for the prior identity were erased; the `.env` file is `chmod 600`; the `agent-ready-ai` GitHub account is push-authenticated by an SSH key (not a personal access token); the git history was rewritten with `git filter-branch` to remove the project's standing-orders documents from every commit on every ref before publication, and `gitleaks detect --log-opts="--all"` returns zero findings across the resulting clean history.
 
 ## What it actually took
 
@@ -83,9 +81,8 @@ The git log has the time receipts: commit timestamps span two days of wall clock
 ## Where to look for the receipts
 
 - **Live**: <https://agentreadypoc.com>
-- **Source**: <https://github.com/johnson-cloud-ai/agent-ready-poc> — MIT licensed
+- **Source**: <https://github.com/agent-ready-ai/agent-ready-poc> — MIT licensed
 - **Iteration tags**: 22 annotated tags (`iter-0-baseline` through `iter-21-mailer-worker`) plus `v1.0.0` — each tag's message contains the gate state at that moment
-- **Final report**: [`docs/final-report.md`](https://github.com/johnson-cloud-ai/agent-ready-poc/blob/main/docs/final-report.md) — deployment summary, gate scores, JSON-LD diagram, full iteration log, 15 gotchas with resolutions, security findings table, handoff notes
 - **MCP discovery**: `POST https://agentreadypoc.com/mcp` with `{"jsonrpc":"2.0","id":1,"method":"initialize"}` (or read the [server card](/.well-known/mcp/server-card.json))
 - **Agent JSON metadata**: <https://agentreadypoc.com/api/agent-info>
 - **Methodology**: [How we engage](/how-we-engage/) describes how the same pattern would be applied to a real client engagement
@@ -95,10 +92,10 @@ The git log has the time receipts: commit timestamps span two days of wall clock
 For readers who want the technical chronology rather than the narrative — every iteration tag with what changed and the resulting gate state lives in the git tag annotations themselves. Pull the latest:
 
 ```bash
-git clone git@github.com:johnson-cloud-ai/agent-ready-poc.git
+git clone git@github.com:agent-ready-ai/agent-ready-poc.git
 cd agent-ready-poc
 git log --oneline --graph --decorate --all
 git tag -l 'iter-*' | xargs -I {} git tag -l --format='%(refname:short)%(contents:subject)' {}
 ```
 
-Or browse the [release page](https://github.com/johnson-cloud-ai/agent-ready-poc/tags) on GitHub. Each tag's message includes the gate score deltas at that iteration and a short description of what shipped.
+Or browse the [release page](https://github.com/agent-ready-ai/agent-ready-poc/tags) on GitHub. Each tag's message includes the gate score deltas at that iteration and a short description of what shipped.

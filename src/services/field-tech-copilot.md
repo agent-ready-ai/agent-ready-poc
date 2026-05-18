@@ -56,7 +56,7 @@ ServiceTitan's industry reports identify field-data capture quality as the highe
 
 ## How this maps to the build of this site
 
-The build agent operates against the same constraint the field tech does: limited bandwidth, intermittent operator attention, a need to capture intent without forcing the human into a structured input form. The operator gave free-form direction; the agent structured it into Checkpoint-conformant deliverables and routed exceptions back. Three-Modality Capture's "voice + camera + context" generalizes to "free-text intent + reference docs + project state."
+The build agent operates against the same constraint the field tech does: limited bandwidth, intermittent operator attention, a need to capture intent without forcing the human into a structured input form. The operator gave free-form direction; the agent structured it into deliverables aligned with the build plan and routed exceptions back. Three-Modality Capture's "voice + camera + context" generalizes to "free-text intent + reference docs + project state."
 
 ## Pricing
 

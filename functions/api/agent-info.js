@@ -63,7 +63,7 @@ export async function onRequest(context) {
         "Claude (Anthropic) via Claude Code, directed by one human operator",
       methodology: `${origin}/how-we-engage/`,
       caseStudy: `${origin}/case-studies/`,
-      source: "https://github.com/johnson-cloud-ai/agent-ready-poc",
+      source: "https://github.com/agent-ready-ai/agent-ready-poc",
     },
     schemaVersion: "1",
   };
