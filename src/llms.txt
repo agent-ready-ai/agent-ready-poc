@@ -16,12 +16,12 @@
 - [How we engage](/how-we-engage/): The eight-checkpoint methodology applied to a real client engagement.
 - [Blog](/blog/): Long-form notes (post-publication).
 - [FAQ](/faq/): Twelve questions about the project, the build, and applying the methodology elsewhere. FAQPage JSON-LD schema.
-- [Contact](/contact/): founder@agentreadypoc.com; Cloudflare Email Routing; Turnstile-protected form at Checkpoint 5.
+- [Contact](/contact/): founder@agentreadypoc.com; Cloudflare Email Routing; Turnstile-protected form gated on a configured site key.
 
 ## Verification
 
 - Gate 1 (Cloudflare Agent Ready scanner): green across reported categories.
-- Gate 2 (Lighthouse + axe-core + W3C HTML validator): 100/100/100/100 on desktop and mobile across all pages; 0 axe violations; 0 W3C errors.
+- Gate 2 (Lighthouse + axe-core + W3C HTML validator): 100/100/100/92 on desktop and mobile across all pages; 0 axe violations; 0 W3C errors. The 8-point SEO gap is a deliberate trade-off — the Cloudflare Content-Signal directive in robots.txt is flagged "Unknown" by Google's parser, and the project keeps the directive to clear Gate 1's Bot Access Control category.
 - Gate 3 (content audit): 5–6 verifiable citations per service detail page; original named framework per service; FAQPage schema; passage-coherent H2 sections per published research on AI-surface content optimization.
 
 ## Optional

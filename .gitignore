@@ -18,8 +18,3 @@ cf_api_token.txt
 # Operator copies workers/mailer/wrangler.toml.example to
 # workers/mailer/wrangler.toml locally and fills in the address.
 workers/mailer/wrangler.toml
-
-# Operator-private docs (kept at /Users/cjohnson/Documents/agent-ready-poc-private/);
-# never in public repo per iter-23 scrub.
-docs/final-report.md
-docs/cloudflare-dashboard-checklist.md

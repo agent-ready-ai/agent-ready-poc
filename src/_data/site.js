@@ -25,7 +25,7 @@ export default {
   builder: {
     name: "Claude",
     publisher: "Anthropic",
-    description: "Claude is a family of large language models developed by Anthropic. This site was authored end-to-end by Claude running inside Claude Code (Anthropic's coding-agent runtime), under direction from one human operator at the eight build-plan checkpoints.",
+    description: "Claude is a family of large language models developed by Anthropic. This site was authored end-to-end by Claude running inside Claude Code (Anthropic's coding-agent runtime), under direction from one human operator who made the high-judgment decisions the build plan reserved for a human.",
     sameAs: [
       "https://www.anthropic.com",
       "https://www.anthropic.com/claude",

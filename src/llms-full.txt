@@ -10,7 +10,7 @@ URL: https://agentreadypoc.com/
 
 Every file on this site was authored by an autonomous agent under direction from a single human operator. The site is modern, secure, accessible (WCAG 2.1 AA), and agent-ready by every published criterion. It models what an AI-advancement firm would ship for a skilled-trades client.
 
-A single agent — Claude, running inside Claude Code — was handed a detailed mission brief and a host with only Docker installed. With minimal human intervention it: scaffolded the build environment in Docker, authored the 11ty static site, configured Cloudflare Pages, ran three independent quality gates against the live deployment, fixed regressions, and tagged each iteration's progress.
+A single agent — Claude, running inside Claude Code — was handed a detailed build plan and a host with only Docker installed. With minimal human intervention it: scaffolded the build environment in Docker, authored the 11ty static site, configured Cloudflare Pages, ran three independent quality gates against the live deployment, fixed regressions, and tagged each iteration's progress.
 
 The point is not that the site is fancy. The point is that nothing in the workflow required a human to write code, configure infrastructure, or hand-tune metrics. The operator's role was approvals at checkpoints the build plan deliberately reserved for human judgment.
 
@@ -34,7 +34,7 @@ A site is agent-ready when an AI agent (an LLM acting as a user, a research assi
 
 Tooling: Docker (only host install), 11ty (static site generator), Cloudflare Pages (hosting + Pages Functions), Cloudflare Registrar (domain), Lighthouse + axe-core + W3C nu validator + gitleaks (verification gates). Authoring agent: Claude (Anthropic), running inside Claude Code. Operator role: checkpoint approvals only — no code editing.
 
-Quality posture: Gate 2 Lighthouse + axe + W3C all score 100/100 on both desktop and mobile across every page; 0 axe violations; 0 W3C errors. Gate 1 (Cloudflare Agent Ready scan) green across categories. Gate 3 (content audit) per Plate Lunch Collective's published research on AI-surface content optimization.
+Quality posture: Gate 2 Lighthouse Perf/A11y/BP at 100 and SEO at 92 (the 8-point gap is a deliberate Content-Signal vs Google-parser trade-off) on both desktop and mobile across every page; 0 axe violations; 0 W3C errors. Gate 1 (Cloudflare Agent Ready scan) green across required categories. Gate 3 (content audit) adapted from Plate Lunch Collective's published research on AI-surface content optimization.
 
 What this is not: a real consultancy taking inbound work; a fabricated case study generator; a claim that agents replace operators. The build plan deliberately reserved eight checkpoints for human judgment — none were automated away.
 
@@ -126,23 +126,23 @@ TL;DR: across two /goal-driven sessions, an autonomous AI agent (Claude in Claud
 
 This case study is about the process more than the artifact. The artifact is described on Services, About, and How we engage. What's documented here is what the operator actually did, where the agent chose not to take shortcuts, what was honestly hard, and what shipped.
 
-What got built: 12 pages of real semantic HTML5; custom domain with SSL + Email Routing; a working Turnstile-verified contact form, rate-limited at the edge (10 req/10s/IP), forwarded by a standalone Cloudflare Worker via the native send_email binding; an MCP server at /mcp speaking JSON-RPC 2.0 with two real tools; agent discovery files (agent-info, agent-skills, api-catalog, openapi, sitemap, robots, llms, llms-full, security.txt, feed.xml); a connected JSON-LD entity graph (Organization, Person, publisher Anthropic, WebSite, WebPage, Article, Service, BreadcrumbList, FAQPage, HowTo, Speakable); editorial visual identity with system fonts only, 16 KB CSS; MIT-licensed public source on GitHub.
+What got built: 12 pages of real semantic HTML5; custom domain with SSL + Email Routing; a working Turnstile-verified contact form, rate-limited at the Cloudflare edge by an operator-configured WAF rule (10 req/10s/IP, configured in the Cloudflare dashboard, not in this repo), forwarded by a standalone Cloudflare Worker via the native send_email binding; an MCP server at /mcp speaking JSON-RPC 2.0 with two real tools; agent discovery files (agent-info, agent-skills, api-catalog, openapi, sitemap, robots, llms, llms-full, security.txt, feed.xml); a connected JSON-LD entity graph (Organization, Person, publisher Anthropic, WebSite, WebPage, Article, Service, BreadcrumbList, FAQPage, HowTo, Speakable); editorial visual identity with system fonts only, 16 KB CSS; MIT-licensed public source on GitHub.
 
 What made the build different — three things:
 
-(1) Eight checkpoints, otherwise full autonomy. Reserved moments for human judgment: domain selection (agent presented five candidates with rationale and top pick), Turnstile site creation, baseline scan review, brand direction, dashboard configuration, all-gates-green sign-off, publication push, final report. Between checkpoints the agent worked unsupervised. When something required a decision — Lighthouse SEO vs Cloudflare Bot Access trade-off; rewrite git history to remove spec files; third-party email vendor vs Cloudflare-native mailer — the agent surfaced options with trade-offs and waited. Operator wrote no code, no architecture, no commit messages. Their work was almost entirely direction.
+(1) Eight checkpoints, otherwise full autonomy. Reserved moments for human judgment: domain selection (agent presented five candidates with rationale and top pick), Turnstile site creation, baseline scan review, brand direction, dashboard configuration, all-gates-green sign-off, publication push, and a final review. Between checkpoints the agent worked unsupervised. When something required a decision — Lighthouse SEO vs Cloudflare Bot Access trade-off; rewrite git history to remove spec files; third-party email vendor vs Cloudflare-native mailer — the agent surfaced options with trade-offs and waited. Operator wrote no code, no architecture, no commit messages. Their work was almost entirely direction.
 
-(2) Honest constraints carried more weight than score-chasing. Build plan included a 125-point content audit. Top scores would have been straightforward by fabricating expert quotes, inventing case studies, claiming an OAuth flow the site doesn't have, publishing an MCP card for a server that doesn't exist. Plan explicitly forbade this; agent honored it. Result: Gate 3 at 114/125 instead of 125 — the three lost points are the attributed-expert-quotes dimension where genuine third-party quotes weren't available; Gate 1 at 83/100 (Level 5 "Agent-Native") instead of 100 — the missing 17 are OAuth discovery + OAuth Protected Resource + one MCP variant requiring metadata for services this static site doesn't run. Both gaps are documented in the final report as deliberate. Second category: when standards bodies disagreed. Cloudflare wants Content-Signal directive inside robots.txt; Google's parser (used by Lighthouse) flags that same directive and costs 8 SEO points. Agent surfaced; operator chose Cloudflare-aligned posture; SEO settles at 92 across all pages; project memory saved so future maintainers don't "fix" it.
+(2) Honest constraints carried more weight than score-chasing. Build plan included a 125-point content audit. Top scores would have been straightforward by fabricating expert quotes, inventing case studies, claiming an OAuth flow the site doesn't have, publishing an MCP card for a server that doesn't exist. Plan explicitly forbade this; agent honored it. Result: Gate 3 at 114/125 instead of 125 — the three lost points are the attributed-expert-quotes dimension where genuine third-party quotes weren't available; Gate 1 at 83/100 (Level 5 "Agent-Native") instead of 100 — the missing 17 are OAuth discovery + OAuth Protected Resource + one MCP variant requiring metadata for services this static site doesn't run. Both gaps are recorded in the annotated tag messages at the iterations where each was considered, as deliberate choices. Second category: when standards bodies disagreed. Cloudflare wants Content-Signal directive inside robots.txt; Google's parser (used by Lighthouse) flags that same directive and costs 8 SEO points. Agent surfaced; operator chose Cloudflare-aligned posture; SEO settles at 92 across all pages; project memory saved so future maintainers don't "fix" it.
 
 (3) Self-reference: the patterns described in Services are the patterns used. Confidence-Routed Intake, The Multimodal Draft Loop, Three-Modality Capture — the same shape (confidence-scored AI handles routine, human reviews exceptions, every transition logged) is how the build worked. Site is its own demo.
 
 Three gates, final state: Gate 1 (Cloudflare Agent Ready scanner) all three required categories 100/100; overall 83/100 Level 5 Agent-Native. Gate 2 (Lighthouse + axe + W3C) 100/100/100/92 every page × both form factors; 0 axe violations; 0 W3C errors; LCP <500ms desktop, <1800ms mobile; CLS 0; INP 0. Gate 3 (125-pt audit) 114/125 every service page. Gate verification automated — headless scanner script drives Chromium against isitagentready.com.
 
-Security: dedicated security sub-agent ran OWASP Top 10 audit. One HIGH, four MEDIUM, four LOW, four INFORMATIONAL. Ten closed, one deferred with rationale (gating WebMCP to /contact/ would cost Gate 1 WebMCP check), two accepted as unavoidable. Operational hygiene: every secret that touched chat history rotated/revoked; macOS keychain stale cred erased; .env chmod 600; SSH-key push path; history rewritten with git filter-branch to remove standing-orders docs from every commit; gitleaks clean across full rewritten history.
+Security: dedicated security sub-agent ran OWASP Top 10 audit. One HIGH, four MEDIUM, four LOW, four INFORMATIONAL. Ten closed, one deferred with rationale (gating WebMCP to /contact/ would cost Gate 1 WebMCP check), two accepted as unavoidable. Operational hygiene: every secret that touched chat history rotated/revoked; macOS keychain stale cred erased; .env chmod 600; SSH-key push path; history rewritten with git filter-branch to remove internal spec docs from every commit; gitleaks clean across full rewritten history.
 
 What it took: two /goal-driven build sessions on top of a one-shot scaffolding session. Agent handled scaffolding, content authoring, design, security review, infrastructure, deploy automation, MCP server implementation, email forwarding architecture, audit response, documentation. Operator's eight checkpoint actions: pick domain, buy it, set up Turnstile, pick brand direction, approve baseline, paste destination email, run verification scan, push to GitHub. Plus five or six mid-build decisions when spec collided with reality.
 
-Receipts: live at agentreadypoc.com; source at github.com/agent-ready-ai/agent-ready-poc; 22 iteration tags plus v1.0.0; final report at docs/final-report.md in the repo; MCP discovery at POST /mcp; agent JSON metadata at /api/agent-info; methodology details on /how-we-engage/.
+Receipts: live at agentreadypoc.com; source at github.com/agent-ready-ai/agent-ready-poc; 23 iteration tags plus v1.0.0; each tag's message records the gate state at that iteration; MCP discovery at POST /mcp; agent JSON metadata at /api/agent-info; methodology details on /how-we-engage/.
 
 ---PAGE BREAK---
 
@@ -193,7 +193,7 @@ Q: What didn't work first try?
 A: Three fix/ branches in git: wrangler/Node 20 conflict (bumped to Node 22); chrome-launcher 1.x default flags (added --headless=new); @axe-core/cli needs chromedriver (swapped to @axe-core/puppeteer).
 
 Q: Is the code open source?
-A: Yes. Published at GitHub at Checkpoint 7. Spec + Docker stack + scripts + every iteration commit.
+A: Yes, MIT-licensed at github.com/agent-ready-ai/agent-ready-poc. Includes the Docker stack, build scripts, verification harness, and every iteration commit.
 
 Q: Could this methodology run for my real business?
 A: Yes. See how-we-engage. Diagnostic call free. Fixed-scope, fixed-fee, 4–8 weeks.
@@ -202,7 +202,7 @@ Q: How much does an engagement cost?
 A: Depends on FSM/CRM integration depth, historical data corpus, number of workflows in scope. Not on public site; depends on diagnostic conversation.
 
 Q: What gates pass?
-A: Gate 1 green; Gate 2 Lighthouse 100/100/100/100 desktop and mobile across all pages, axe 0, W3C 0; Gate 3 service pages have 5–6 verifiable citations each, original named framework, FAQPage schema.
+A: Gate 1 green across required categories; Gate 2 Lighthouse 100/100/100/92 desktop and mobile across all pages (the 8-point SEO gap is the intentional Content-Signal vs Google-parser trade-off), axe 0, W3C 0; Gate 3 service pages have 5–6 verifiable citations each, original named framework, FAQPage schema.
 
 ---PAGE BREAK---
 
@@ -214,6 +214,6 @@ This project is a proof-of-concept, not an active consultancy. Inbound about the
 
 Email: founder@agentreadypoc.com (Cloudflare Email Routing → operator inbox). Same-business-day reply Mon–Fri US Eastern.
 
-Form: Turnstile-protected form lands at Checkpoint 5 of the build plan. Until then, email is the only inbound channel.
+Form: Turnstile-protected contact form on the contact page once the site key is configured. Until then, email is the only inbound channel.
 
-Source: full repository at GitHub (link lands at Checkpoint 7). Repository includes the build (Dockerfile, docker-compose.yml, Makefile, .eleventy.js, verification scripts), site (every page, every _headers rule, every JSON-LD graph entry), and history (every commit, every iteration tag, every fix branch — un-rewritten). The mission-brief specification that drove the build is held private as part of the methodology.
+Source: full repository at github.com/agent-ready-ai/agent-ready-poc (MIT). Repository includes the build (Dockerfile, docker-compose.yml, Makefile, .eleventy.js, verification scripts), site (every page, every _headers rule, every JSON-LD graph entry), and history (every commit, every iteration tag).

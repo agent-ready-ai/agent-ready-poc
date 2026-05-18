@@ -111,7 +111,7 @@ Three independent gates the build was held to:
    - Mobile: Performance ≥90, Accessibility ≥95, Best Practices ≥95, SEO ≥95
    - 0 axe violations · 0 W3C HTML errors
    - Cloudflare's default headers + this repo's `_headers` deliver SSL Labs A/A+ and securityheaders.com A/A+ posture
-3. **Plate Lunch 125-point content audit** — five 25-point dimensions (Citation Analysis, Authority Signals, Content Structure, Structured Data, Cross-Platform Consistency). At least one service detail page ≥105/125.
+3. **125-point content audit** — a 5×25 rubric adapted by the build plan from Plate Lunch Collective's published themes on AI-surface content optimization (Citation Analysis, Authority Signals, Content Structure, Structured Data, Cross-Platform Consistency). The 125-point form is the build plan's adaptation, not a Plate Lunch product. At least one service detail page ≥105/125.
 
 See `git log --oneline --graph --all --decorate` for the iteration trail with score deltas at each tag.
 

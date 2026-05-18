@@ -26,7 +26,7 @@ Cloudflare publishes a third-party scanner ([isitagentready.com](https://isitage
 ## How it was built
 
 - **Tooling:** Docker (only host install), 11ty (static site generator), Cloudflare Pages (hosting + Pages Functions), Cloudflare Registrar (domain), Lighthouse + axe-core + W3C nu validator + gitleaks (verification gates).
-- **Authoring agent:** [Claude](https://www.anthropic.com/claude), built by [Anthropic](https://www.anthropic.com) ([Wikipedia](https://en.wikipedia.org/wiki/Anthropic)). Running inside [Claude Code](https://claude.com/claude-code), Anthropic's coding-agent runtime, executing a detailed mission-brief specification.
+- **Authoring agent:** [Claude](https://www.anthropic.com/claude), built by [Anthropic](https://www.anthropic.com) ([Wikipedia](https://en.wikipedia.org/wiki/Anthropic)). Running inside [Claude Code](https://claude.com/claude-code), Anthropic's coding-agent runtime, executing a detailed build plan.
 - **Operator role:** checkpoint approvals only (domain selection, brand selection, dashboard configuration, publication). No code editing.
 - **Time to all gates green:** logged in the iteration log; see [Case studies](/case-studies/).
 
@@ -44,7 +44,7 @@ These references are reflected as `sameAs` links on the `Person` and publishing 
 
 ## Quality posture
 
-- **Gate 2 — Lighthouse + axe + W3C:** Performance, Accessibility, Best Practices, and SEO all score 100/100 on both desktop and mobile across every page. axe-core reports zero violations. The W3C HTML validator reports zero errors.
+- **Gate 2 — Lighthouse + axe + W3C:** Performance, Accessibility, and Best Practices score 100/100 on both desktop and mobile across every page. SEO scores 92/100 — an intentional 8-point gap, because the robots.txt Content-Signal directive Cloudflare requires for Gate 1 is flagged "Unknown" by Google's parser. axe-core reports zero violations. The W3C HTML validator reports zero errors.
 - **Gate 1 — Cloudflare Agent Ready scan:** All categories the scanner reports green by design.
 - **Gate 3 — Content audit:** Service pages structured for retrieval (passage coherence, section-level TL;DRs, FAQPage schema, citation density) per the published research on content optimization for AI surfaces [^pl].
 
