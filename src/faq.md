@@ -20,7 +20,7 @@ faqs:
   - q: "What didn't work on the first try?"
     a: "Three things, all logged in the git history under fix/ branches. First — wrangler 4.x refused to run on Node 20 because the published Node engine requirement changed mid-build; bumped Dockerfile to Node 22. Second — chrome-launcher 1.x doesn't include --headless in its defaultFlags, so the lighthouse harness's first run hit ECONNREFUSED; added --headless=new. Third — @axe-core/cli needs chromedriver, which isn't in the Debian Chromium package; swapped to @axe-core/puppeteer which talks to Chrome over CDP directly."
   - q: "Is the code open source?"
-    a: "Yes. Published at GitHub at Checkpoint 7. The repository includes the Docker stack, the build scripts, the verification harness, and every iteration's commit history. The mission-brief specification that drove the build is held private as part of the methodology. The full repo link lands in the README and on the contact page after publication."
+    a: "Yes. The public repository at github.com/agent-ready-ai/agent-ready-poc includes the Docker stack, the build scripts, the verification harness, and every iteration's commit history. The mission-brief specification that drove the build is held private as part of the methodology."
   - q: "Could this methodology run for my real business?"
     a: "Yes. The methodology is described in detail on the How we engage page. The diagnostic call is free; the engagement is fixed-scope, fixed-fee, 4–8 weeks. The contact page has the inbound channel."
   - q: "How much does an engagement cost?"

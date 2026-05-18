@@ -1,6 +1,6 @@
 // Contact form handler — Turnstile-verified, then forwarded.
 //
-// Inert until env vars are set at Checkpoint 5:
+// Inert until env vars are set:
 //   TURNSTILE_SECRET_KEY  required for verification
 //   CONTACT_FORWARD_TO    optional, falls back to founder@agentreadypoc.com
 //
@@ -33,7 +33,7 @@ export async function onRequest(context) {
     return new Response(
       JSON.stringify({
         error:
-          "Form not yet configured. The TURNSTILE_SECRET_KEY env var lands at Checkpoint 5; until then, email founder@agentreadypoc.com directly.",
+          "Form not yet configured. Email founder@agentreadypoc.com directly.",
       }),
       {
         status: 503,

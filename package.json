@@ -1,9 +1,19 @@
 {
   "name": "agent-ready-poc",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Agent-ready static site demo deployed end-to-end on Cloudflare.",
+  "description": "Agent-ready static site demo deployed end-to-end on Cloudflare. Built by an autonomous AI agent.",
   "type": "module",
+  "license": "MIT",
+  "author": "agent-ready-poc operator",
+  "homepage": "https://agentreadypoc.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agent-ready-ai/agent-ready-poc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agent-ready-ai/agent-ready-poc/issues"
+  },
   "engines": {
     "node": "22"
   },

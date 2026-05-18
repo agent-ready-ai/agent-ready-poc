@@ -46,13 +46,13 @@ export default {
     ]
   },
   email: "founder@agentreadypoc.com",
-  // Turnstile site key set at Checkpoint 2 by the operator (public; commit safe).
+  // Turnstile site key — public, safe to commit.
   // The corresponding TURNSTILE_SECRET_KEY lives only in the Pages env, never in the repo.
   turnstileSiteKey: "0x4AAAAAADRIu9HEgyaATl1f",
-  // Web Analytics beacon token set after Gate 1 passes (Checkpoint 5+).
+  // Web Analytics beacon token — set in the Cloudflare Pages dashboard after deploy.
   analytics: {
     beaconToken: null,
   },
   hours: "Monday–Friday, 9–5 US Eastern (project communication; the site itself is async).",
-  github: "https://github.com/johnson-cloud-ai/agent-ready-poc",
+  github: "https://github.com/agent-ready-ai/agent-ready-poc",
 };

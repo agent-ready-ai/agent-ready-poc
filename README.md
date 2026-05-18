@@ -3,7 +3,7 @@
 A proof-of-concept that an autonomous AI agent — Claude, running inside Claude Code — can ship a complete, modern, secure, accessible, agent-ready static site end-to-end on Cloudflare, with a human operator's role limited to approval at eight checkpoints reserved for human judgment.
 
 **Live:** <https://agentreadypoc.com> · also <https://agent-ready-poc.pages.dev>
-**Source:** <https://github.com/johnson-cloud-ai/agent-ready-poc> · MIT licensed · v1.0.0
+**Source:** <https://github.com/agent-ready-ai/agent-ready-poc> · MIT licensed · v1.0.0
 
 ## What's in this repository
 
@@ -69,7 +69,7 @@ make nuke                 # clean + remove the Docker image
 - **Static site:** 11ty (Nunjucks templates over markdown source)
 - **Hosting:** Cloudflare Pages (static assets + Pages Functions)
 - **DNS / TLS / CDN / WAF:** Cloudflare (Universal SSL, HTTP/3, Free WAF)
-- **Form spam:** Cloudflare Turnstile (Pages Function at `/functions/api/contact.js` — pending Checkpoint 5)
+- **Form spam:** Cloudflare Turnstile (Pages Function at `/functions/api/contact.js`)
 - **Email:** Cloudflare Email Routing (`founder@agentreadypoc.com` → operator inbox)
 - **Analytics:** Cloudflare Web Analytics (cookieless; enabled after Gate 1 confirmation)
 - **Verification:** Lighthouse + axe-core + W3C nu validator + Cloudflare Agent Ready scan + content audit
@@ -89,7 +89,13 @@ All brand-coupled values live in `src/_data/site.js`. Edit there, rebuild, redep
 
 ## How to rotate Turnstile keys
 
-Generate a new pair at <https://dash.cloudflare.com/?to=/:account/turnstile>. Replace `site.turnstileSiteKey` in `src/_data/site.js` (public). Replace `TURNSTILE_SECRET_KEY` in the Cloudflare Pages project's environment variables (private; never commit). Re-deploy.
+Generate a new keypair at <https://dash.cloudflare.com/?to=/:account/turnstile>. The two halves rotate independently and live in different places:
+
+**Site key (public, commit-safe).** Replace `site.turnstileSiteKey` in `src/_data/site.js`, commit, and re-deploy via `make deploy`. This value is rendered into the page's HTML; it is meant to be public and is not a secret.
+
+**Secret key (private, never commit).** In the Cloudflare Pages project's settings → Environment variables, replace `TURNSTILE_SECRET_KEY` for the production environment and save. Trigger a redeploy from the dashboard so the new value attaches to the running Function. The secret never enters the repository, the `.env` file, or any commit message.
+
+After both halves are rotated, submit a test message through `/contact/` and confirm the email forwards through to the configured destination. If verification fails, the keys are mismatched — re-check that both halves come from the same Turnstile widget.
 
 ## How to rotate `CLOUDFLARE_API_TOKEN`
 

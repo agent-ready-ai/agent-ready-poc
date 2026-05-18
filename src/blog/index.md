@@ -6,6 +6,6 @@ description: Notes on what worked, what didn't, and what was surprising in build
 
 # Blog
 
-Long-form notes will land here. The first piece, **"What an autonomous build session actually looks like"** — a post-mortem of this site's build, written after Checkpoint 7 publication — is in progress.
+Long-form notes will land here. The first piece is in progress.
 
-In the meantime, the closest thing to a build journal is `git log --oneline --graph --all` in the [repository](https://github.com/) (link lands here at Checkpoint 7) and the iteration summaries on [Case studies](/case-studies/).
+In the meantime, the closest thing to a build journal is the iteration summaries on [Case studies](/case-studies/) and the annotated tag history in the [public repository](https://github.com/agent-ready-ai/agent-ready-poc/tags).
