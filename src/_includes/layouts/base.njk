@@ -6,18 +6,23 @@
     <title>{{ title or site.name }}</title>
     {% if description %}<meta name="description" content="{{ description }}" />{% endif %}
     <link rel="canonical" href="{{ site.url }}{{ page.url }}" />
+    {% if page.url == "/404.html" %}<meta name="robots" content="noindex,follow" />{% endif %}
     {% if page.url != "/404.html" %}
     <link rel="alternate" type="text/markdown" href="{{ page.url }}index.md" />
     {% endif %}
     <meta property="og:title" content="{{ title or site.name }}" />
     {% if description %}<meta property="og:description" content="{{ description }}" />{% endif %}
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="{% if article %}article{% else %}website{% endif %}" />
+    <meta property="og:site_name" content="{{ site.name }}" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:image" content="{{ site.url }}/assets/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="{{ site.name }} — {{ site.tagline }}" />
     <meta name="twitter:image" content="{{ site.url }}/assets/og.png" />
+    <meta name="twitter:image:alt" content="{{ site.name }} — {{ site.tagline }}" />
     <link rel="alternate" type="application/atom+xml" title="{{ site.name }} feed" href="/feed.xml" />
     <link rel="stylesheet" href="/assets/css/main.css" />
     <script src="/assets/js/webmcp.js" defer></script>
@@ -176,6 +181,17 @@
       </div>
     </header>
     <main id="main">
+      {% if page.url != "/" and page.url != "/404.html" %}
+      <nav aria-label="Breadcrumb" class="breadcrumbs">
+        <ol>
+          {%- for crumb in page.url | breadcrumbs(site.url) %}
+          <li>
+            {% if loop.last %}<span aria-current="page">{{ crumb.name }}</span>{% else %}<a href="{{ crumb.item | replace(site.url, '') }}">{{ crumb.name }}</a>{% endif %}
+          </li>
+          {%- endfor %}
+        </ol>
+      </nav>
+      {% endif %}
       {{ content | safe }}
     </main>
     <footer>
