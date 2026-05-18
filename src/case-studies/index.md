@@ -1,7 +1,7 @@
 ---
 layout: layouts/base.njk
 title: Case study — building this site with an AI agent
-description: An autonomous agent shipped this site end-to-end on Cloudflare across two work sessions. What it actually did, where it stopped, and what made the build different from a normal one.
+description: How an autonomous agent shipped this site end-to-end on Cloudflare across two work sessions — what it did, where it stopped, and what shipped.
 article: true
 ---
 

@@ -230,6 +230,32 @@ main#main {
   padding: var(--s-8) var(--page-pad-x) var(--s-9);
 }
 
+/* Breadcrumb trail above page content. Visible navigation aid
+   per Google's SEO guidance, mirroring the JSON-LD BreadcrumbList.
+   Small, quiet, accent on separators only. */
+nav.breadcrumbs {
+  font-size: 0.875rem;
+  color: var(--c-muted, currentColor);
+  margin: 0 0 var(--s-5);
+  opacity: 0.85;
+}
+nav.breadcrumbs ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em;
+}
+nav.breadcrumbs li + li::before {
+  content: "/";
+  margin-right: 0.35em;
+  color: var(--c-accent);
+}
+nav.breadcrumbs a { text-decoration: none; }
+nav.breadcrumbs a:hover { text-decoration: underline; }
+nav.breadcrumbs [aria-current="page"] { font-weight: 500; }
+
 /* Services index, FAQ, case studies — long lists read better
    with a slightly wider measure. Pages with these slugs are
    identified by body attribute? No JS, no attribute. Instead

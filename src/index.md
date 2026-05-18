@@ -4,7 +4,7 @@ title: Agent Ready POC — the proof-of-concept that built itself
 description: Live demonstration of what an autonomous AI agent can ship end-to-end on Cloudflare for an AI-advancement firm targeting skilled trades.
 ---
 
-# Agent Ready POC
+# Agent Ready POC: the site an autonomous agent built
 
 > **TL;DR.** Every file on this site was authored by an autonomous agent under direction from a single human operator. The site is modern, secure, accessible (WCAG 2.1 AA), and agent-ready by every published criterion. It models what an AI-advancement firm would ship for a skilled-trades client.
 
