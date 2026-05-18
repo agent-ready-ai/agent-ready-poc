@@ -8,13 +8,13 @@ howTo:
   description: A four-phase, fixed-scope, 4–8 week methodology for shipping an AI implementation into production at a skilled-trades or local-service business. Same methodology that built this site.
   totalTime: P56D
   step:
-    - name: Week 1 — Diagnose
+    - name: "Week 1: Diagnose"
       text: Agent and operator pair shadow the client's workflow. No questionnaires; ride the truck, sit on the phones, watch the estimator. Output is a one-pager describing the workflow's actual shape (which is rarely what the org chart says).
-    - name: Week 2 — Scope
+    - name: "Week 2: Scope"
       text: Agent drafts the build plan against the diagnosed workflow. Operator reviews with the client. Output is a signed scope with explicit "done" criteria, gate metrics, and a fixed delivery date.
-    - name: Weeks 3–6 — Build
-      text: Agent ships against the scope with daily git commits, weekly tagged iterations, weekly client check-in. Operator surfaces blockers. If a scope conflict emerges, the engagement pauses for a re-scope conversation — not for stealth scope expansion.
-    - name: Weeks 7–8 — Handoff
+    - name: "Weeks 3–6: Build"
+      text: Agent ships against the scope with daily git commits, weekly tagged iterations, weekly client check-in. Operator surfaces blockers. If a scope conflict emerges, the engagement pauses for a re-scope conversation, not stealth scope expansion.
+    - name: "Weeks 7–8: Handoff"
       text: Production deploy, runbooks for routine operations, eval harness for regression testing, monitoring dashboards, training session, 30-day post-launch checkpoint. The client can operate the system without us.
 ---
 
@@ -26,14 +26,14 @@ This site followed an eight-checkpoint plan with the agent working autonomously 
 
 ### Checkpoint pattern
 
-1. **Prereqs** — environment ready, credentials scoped, host tooling minimal.
-2. **Domain / identity** — operator-purchased; agent provides shortlist with rationale.
-3. **Account-level surfaces** — Turnstile site, API tokens, account-scoped resources. Operator clicks; agent records keys.
-4. **Build environment** — Docker stack, gate scripts, baseline measurement deployed.
-5. **Direction / brand** — operator picks among agent-presented options. No fabrication.
-6. **Iterations** — agent ships against gates, tags every iteration. Operator approves before promoting.
-7. **Publication / production handoff** — agent prepares documentation, license, changelog; operator authorizes push.
-8. **Final report** — agent delivers a structured summary; operator owns external communications.
+1. **Prereqs.** Environment ready, credentials scoped, host tooling minimal.
+2. **Domain / identity.** Operator-purchased; agent provides shortlist with rationale.
+3. **Account-level surfaces.** Turnstile site, API tokens, account-scoped resources. Operator clicks; agent records keys.
+4. **Build environment.** Docker stack, gate scripts, baseline measurement deployed.
+5. **Direction / brand.** Operator picks among agent-presented options. No fabrication.
+6. **Iterations.** Agent ships against gates, tags every iteration. Operator approves before promoting.
+7. **Publication / production handoff.** Agent prepares documentation, license, changelog; operator authorizes push.
+8. **Final review.** Agent delivers a structured summary of the build state; operator owns external communications.
 
 ### Build cadence
 
@@ -44,7 +44,7 @@ Every iteration is annotated-tagged in git with the metric deltas. Every iterati
 - Approves at the eight checkpoints.
 - Owns external actions the agent legitimately can't take (domain purchase, account-level dashboard work, GitHub push).
 - Overrides the agent on judgment calls (brand selection, scope-boundary).
-- **Does not edit code** unless they want to.
+- Does not edit code unless they want to.
 
 ### What the agent does
 
@@ -57,19 +57,19 @@ Every iteration is annotated-tagged in git with the metric deltas. Every iterati
 
 For a skilled-trades client adopting AI in one of the three patterns described in [Services](/services/), the same methodology produces a fixed-scope, fixed-fee, 4–8 week engagement:
 
-### Week 1 — Diagnose
+### Week 1: Diagnose
 
 Agent + operator pair shadow the client's workflow. No questionnaires; ride the truck, sit on the phones, watch the estimator. Output: a one-pager describing the workflow's actual shape (which is rarely what the org chart says).
 
-### Week 2 — Scope
+### Week 2: Scope
 
 Agent drafts the build plan against the diagnosed workflow. Operator reviews with the client. Output: a signed scope with explicit "done" criteria, gate metrics, and a fixed delivery date.
 
-### Weeks 3–6 — Build
+### Weeks 3–6: Build
 
-Agent ships against the scope. Daily git commits, weekly tagged iterations, weekly client check-in. Operator surfaces blockers. If a scope conflict emerges, the engagement pauses for a re-scope conversation — not for stealth scope expansion.
+Agent ships against the scope. Daily git commits, weekly tagged iterations, weekly client check-in. Operator surfaces blockers. If a scope conflict emerges, the engagement pauses for a re-scope conversation, not stealth scope expansion.
 
-### Weeks 7–8 — Handoff
+### Weeks 7–8: Handoff
 
 Production deploy, runbooks for routine operations, eval harness for regression testing, monitoring dashboards, training session. The client can operate the system without us.
 
@@ -89,4 +89,4 @@ Production deploy, runbooks for routine operations, eval harness for regression 
 
 The build engagement pricing depends on three factors: existing FSM/CRM integration depth, historical data corpus size, and number of distinct workflows in scope. Diagnostic call is always free; if we can't ship in 4–8 weeks we say so and decline.
 
-(Specific tier pricing is intentionally not on the public site — it depends on the diagnostic conversation.)
+(Specific tier pricing is intentionally not on the public site; it depends on the diagnostic conversation.)

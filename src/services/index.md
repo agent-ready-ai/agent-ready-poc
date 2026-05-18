@@ -22,7 +22,7 @@ Multimodal capture (photo, voice, free text, partial CAD) → model drafts a str
 
 ## Field-tech copilot
 
-Voice-first AI assistant for the truck cab. Pull manuals, log notes, schedule callbacks, capture before/after photos — without typing on a phone in the rain. Offline-capable; syncs when service returns.
+Voice-first AI assistant for the truck cab. Pull manuals, log notes, schedule callbacks, capture before/after photos, without typing on a phone in the rain. Offline-capable; syncs when service returns.
 
 **[See details →](/services/field-tech-copilot/)**
 
@@ -30,4 +30,4 @@ Voice-first AI assistant for the truck cab. Pull manuals, log notes, schedule ca
 
 The three services share a single architectural commitment: **confidence-scored AI handles the routine, a human handles the exceptions, and every transition is logged**. That same commitment shaped this site: routine scaffolding stayed in the agent loop, brand selection and Turnstile setup routed to the operator, and every step is tagged in the git history.
 
-The pattern generalizes. The same approach — narrow workflow, measurable handoff, audit trail, ship to production — is what we would build for a real client.
+The pattern generalizes. The same approach (narrow workflow, measurable handoff, audit trail, ship to production) is what we would build for a real client.

@@ -8,7 +8,7 @@ description: How to reach the operator behind this project, and where to find th
 
 ## About inbound
 
-This project is a proof-of-concept, not an active consultancy. Inbound about the **methodology** — applying the same agent-driven build pattern to a real business — is welcome. Inbound about the **proof-of-concept itself** (questions, corrections, references to comparable work) is also welcome.
+This project is a proof-of-concept, not an active consultancy. Inbound about the methodology (applying the same agent-driven build pattern to a real business) is welcome. Inbound about the proof-of-concept itself (questions, corrections, references to comparable work) is also welcome.
 
 ## Email
 
@@ -54,7 +54,7 @@ Public repository: **<https://github.com/agent-ready-ai/agent-ready-poc>** (MIT)
 
 - **Build:** `Dockerfile`, `docker-compose.yml`, `Makefile`, `.eleventy.js`, the verification scripts (lighthouse, axe, validate, scan)
 - **Site:** every page on this site, every `_headers` rule, every JSON-LD graph entry
-- **History:** every commit and 15 annotated iteration tags — `iter-0-baseline` through `v1.0.0`
+- **History:** every commit and the annotated iteration tags from `iter-0-baseline` through `v1.0.0`
 
 ## Hours
 
