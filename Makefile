@@ -1,5 +1,5 @@
 .PHONY: help bootstrap install-fresh install up down stop logs shell build dev \
-        deploy whoami validate lighthouse a11y scan check-all changelog \
+        deploy whoami validate lighthouse a11y scan mcp-test check-all changelog \
         secret-scan clean nuke
 
 COMPOSE := docker compose
@@ -66,7 +66,10 @@ a11y: ## axe-core accessibility tests on all pages
 scan: ## POST to isitagentready.com and print results
 	$(DO) npm run scan
 
-check-all: validate lighthouse a11y scan ## Run all verification gates
+mcp-test: ## End-to-end JSON-RPC tests against /mcp (per Cloudflare's test-remote-mcp-server guide)
+	$(DO) sh -c 'BASE_URL=$${BASE_URL:-https://agentreadypoc.com} npm run mcp-test'
+
+check-all: validate lighthouse a11y scan mcp-test ## Run all verification gates
 
 changelog: ## Generate CHANGELOG.md from conventional commits
 	$(DO) npm run changelog
