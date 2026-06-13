@@ -1,0 +1,24 @@
+{
+  "endpoints": [
+    {
+      "path": "/.well-known/mcp/server-card.json",
+      "rel": "mcp-server-card",
+      "type": "application/json"
+    },
+    {
+      "path": "/.well-known/agent-skills/index.json",
+      "rel": "agent-skills",
+      "type": "application/json"
+    },
+    {
+      "path": "/pricing.md",
+      "rel": "service-doc",
+      "type": "text/markdown"
+    },
+    {
+      "path": "/openapi.json",
+      "rel": "service-desc",
+      "type": "application/json"
+    }
+  ]
+}

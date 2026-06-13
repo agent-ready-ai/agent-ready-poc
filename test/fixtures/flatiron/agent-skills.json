@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "site-intel",
+      "description": "Standard industrial intelligence skill for automated agent coordination.",
+      "path": "/.well-known/mcp/server-card.json"
+    }
+  ]
+}

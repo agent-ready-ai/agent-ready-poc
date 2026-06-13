@@ -1,0 +1,16 @@
+{
+  "mcpServers": [
+    {
+      "name": "Flatiron Building",
+      "version": "1.0.0",
+      "transport": {
+        "type": "http",
+        "url": "https://flatironbuildingnyc.com/api/mcp"
+      },
+      "serverInfo": {
+        "name": "Flatiron Building",
+        "version": "1.0.0"
+      }
+    }
+  ]
+}

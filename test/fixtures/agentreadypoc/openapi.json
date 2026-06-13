@@ -1,0 +1,132 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Agent Ready POC API",
+    "version": "1.0.0",
+    "description": "Two endpoints: a JSON organization summary for agents (GET), and a Turnstile-protected contact form handler (POST).",
+    "contact": {
+      "email": "founder@agentreadypoc.com",
+      "url": "https://agentreadypoc.com/contact/"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://agentreadypoc.com/LICENSE"
+    }
+  },
+  "servers": [
+    { "url": "https://agentreadypoc.com", "description": "Production" }
+  ],
+  "paths": {
+    "/api/agent-info": {
+      "get": {
+        "summary": "Organization metadata for autonomous agents",
+        "description": "Returns a JSON summary of the organization, three services with their named frameworks, contact info, discovery URLs, and build provenance. Wildcard CORS; GET-only; 1-hour cache.",
+        "operationId": "getAgentInfo",
+        "responses": {
+          "200": {
+            "description": "JSON summary of the organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "organization": { "type": "string" },
+                    "domain": { "type": "string" },
+                    "description": { "type": "string" },
+                    "tagline": { "type": "string" },
+                    "services": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": { "type": "string" },
+                          "name": { "type": "string" },
+                          "summary": { "type": "string" },
+                          "framework": { "type": "string" },
+                          "url": { "type": "string", "format": "uri" }
+                        }
+                      }
+                    },
+                    "contact": {
+                      "type": "object",
+                      "properties": {
+                        "email": { "type": "string", "format": "email" },
+                        "hours": { "type": "string" },
+                        "form": { "type": "string", "format": "uri" }
+                      }
+                    },
+                    "discovery": {
+                      "type": "object",
+                      "properties": {
+                        "sitemap": { "type": "string", "format": "uri" },
+                        "robots": { "type": "string", "format": "uri" },
+                        "llms": { "type": "string", "format": "uri" },
+                        "llmsFull": { "type": "string", "format": "uri" }
+                      }
+                    },
+                    "build": {
+                      "type": "object",
+                      "properties": {
+                        "builtBy": { "type": "string" },
+                        "methodology": { "type": "string", "format": "uri" },
+                        "caseStudy": { "type": "string", "format": "uri" },
+                        "source": { "type": "string", "format": "uri", "nullable": true }
+                      }
+                    },
+                    "schemaVersion": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "405": { "description": "Method not allowed (only GET supported)" }
+        }
+      }
+    },
+    "/api/contact": {
+      "post": {
+        "summary": "Submit a Turnstile-verified contact form",
+        "description": "Verifies the Cloudflare Turnstile token, validates form fields, and on success queues an inbound message. Honeypot field 'website' silently accepts spam.",
+        "operationId": "submitContact",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "message", "cf-turnstile-response"],
+                "properties": {
+                  "name": { "type": "string", "maxLength": 200 },
+                  "email": { "type": "string", "format": "email", "maxLength": 200 },
+                  "message": { "type": "string", "maxLength": 5000 },
+                  "website": { "type": "string", "description": "Honeypot — must be empty" },
+                  "cf-turnstile-response": { "type": "string", "description": "Cloudflare Turnstile token from the widget" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Submission accepted",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "ok": { "type": "boolean" } } }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or Turnstile verification failed",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "error": { "type": "string" } } }
+              }
+            }
+          },
+          "405": { "description": "Method not allowed (only POST supported)" },
+          "503": { "description": "Form not configured (TURNSTILE_SECRET_KEY missing)" }
+        }
+      }
+    }
+  }
+}

@@ -217,3 +217,17 @@ Email: founder@agentreadypoc.com (Cloudflare Email Routing → operator inbox). 
 Form: Turnstile-protected contact form on the contact page once the site key is configured. Until then, email is the only inbound channel.
 
 Source: full repository at github.com/agent-ready-ai/agent-ready-poc (MIT). Repository includes the build (Dockerfile, docker-compose.yml, Makefile, .eleventy.js, verification scripts), site (every page, every _headers rule, every JSON-LD graph entry), and history (every commit, every iteration tag).
+
+---PAGE BREAK---
+
+## Probe — agent-readiness inspector
+
+URL: https://agentreadypoc.com/probe/
+
+Probe inspects any public site and reports the agent-ready surfaces it exposes: whether agents can discover it, read it as Markdown, call it over MCP, find its skills, read its API, see how to authenticate, and learn what actions cost. It fetches and parses public discovery files only; it never calls, authenticates to, or transacts with anything it finds. Same input, same output; no model in the loop; zero tokens per scan.
+
+How it works: Probe runs server-side in a Cloudflare Pages Function (POST /api/probe with { "target": "<url>" }). It issues GET requests to standard discovery paths (/llms.txt, /.well-known/api-catalog, /openapi.json, /.well-known/mcp/server-card.json, /.well-known/agent-skills/index.json, /.well-known/openid-configuration, /pricing.md), parses each one, and returns a seven-point coverage report. Every site returns the same shape, so a richly instrumented site and a bare one compare at a glance.
+
+The seven surfaces: Discoverable (llms.txt or a robots sitemap), Readable (Markdown via content negotiation or .md alternates), MCP (a server-card advertising callable tools), Skills (an agent-skills index of named capabilities), API (an OpenAPI document or api-catalog), Auth (an openid-configuration — presence noted only, never invoked), Pricing (a pricing.md or priced API).
+
+Read-only boundary: Probe is an inspector, not an actor. It reads the public files a site publishes for agents and reports them back — the safe first step of any agent interaction. The boundary is enforced in code: there is no path that calls a discovered endpoint, completes an OpenID flow, or sends anything to a priced endpoint. No scan content is stored or logged. Parsers are pure functions tested against captured fixtures, robust to divergent schemas (RFC-9264 linkset vs. endpoint-array catalogs; top-level vs. nested MCP tools; url- vs. path-keyed skills) and to advertised-but-missing surfaces.

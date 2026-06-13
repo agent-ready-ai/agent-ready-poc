@@ -7,15 +7,15 @@ A proof-of-concept that an autonomous AI agent — Claude, running inside Claude
 
 ## What's in this repository
 
-| Path | Purpose |
-|---|---|
-| `Dockerfile` + `docker-compose.yml` | Build environment (Node 22 + arm64 + Chromium + gitleaks + wrangler) |
-| `Makefile` | Entry point for every build/deploy/verify command |
-| `.eleventy.js` | 11ty static site generator config |
-| `src/` | Source: markdown pages, layouts, partials, _headers, robots.txt, llms.txt, sitemap template |
-| `scripts/` | Verification harness: lighthouse-median (3x, both form factors), axe-core, W3C HTML validator, Gate 1 scanner pointer |
-| `functions/api/agent-info.js` | Cloudflare Pages Function — agent-readable JSON summary (stretch goal) |
-| `.claude/settings.json` | Shared agent config (hooks, `skipAutoPermissionPrompt`) |
+| Path                                | Purpose                                                                                                               |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `Dockerfile` + `docker-compose.yml` | Build environment (Node 22 + arm64 + Chromium + gitleaks + wrangler)                                                  |
+| `Makefile`                          | Entry point for every build/deploy/verify command                                                                     |
+| `.eleventy.js`                      | 11ty static site generator config                                                                                     |
+| `src/`                              | Source: markdown pages, layouts, partials, \_headers, robots.txt, llms.txt, sitemap template                          |
+| `scripts/`                          | Verification harness: lighthouse-median (3x, both form factors), axe-core, W3C HTML validator, Gate 1 scanner pointer |
+| `functions/api/agent-info.js`       | Cloudflare Pages Function — agent-readable JSON summary (stretch goal)                                                |
+| `.claude/settings.json`             | Shared agent config (hooks, `skipAutoPermissionPrompt`)                                                               |
 
 ## Prerequisites
 
@@ -82,6 +82,43 @@ make nuke                 # clean + remove the Docker image
 4. `make build && make validate && make a11y && make lighthouse` locally.
 5. Commit on a `feat/<kebab>` branch; merge to `main` with `--no-ff`.
 6. `make deploy`. Re-run all gates against the deploy URL. Tag the iteration.
+
+## How Probe works
+
+Probe (`/probe/`) is a read-only agent-readiness inspector. You give it a URL; it
+reports which agent-ready surfaces that site exposes on a seven-point board —
+Discoverable, Readable, MCP, Skills, API, Auth, Pricing.
+
+- **`functions/api/probe.js`** — the Pages Function. Owns the untrusted-input
+  boundary: it accepts `POST { "target": "<url>" }`, validates the URL, blocks
+  private/loopback/link-local/metadata hosts (SSRF), then issues capped, timed
+  `GET`s to the target's well-known discovery paths. It is strictly read-only —
+  there is no code path that calls a discovered endpoint, authenticates, or
+  transacts — and it stores/logs nothing about a scan.
+- **`functions/api/_probe/parsers.js`** — pure, deterministic parsers (no
+  network, no clock). Each tolerates divergent real-world schemas and malformed
+  input, returning an empty shape rather than throwing.
+- **`functions/api/_probe/report.js`** — pure coverage assembly: turns the fetch
+  results into the `{ target, coverage, score, surfaces }` report the UI renders.
+- **`src/assets/js/probe.js`** — the browser widget (external, no inline JS).
+  Renders results via `textContent` only (scanned output is untrusted).
+- **`src/probe.md`** — the page. Ships a static worked example so it is useful
+  with JavaScript disabled; the widget upgrades it when JS runs.
+
+Determinism makes it testable: `npm test` runs the parsers and report assembly
+against captured fixtures in `test/fixtures/` (a rich 7/7 site and a sparse 5/7
+site) — same input, same output.
+
+### How to add a parser
+
+1. Write a pure `parseX(input, baseUrl?)` in `functions/api/_probe/parsers.js`
+   that returns a normalized shape and never throws on bad input.
+2. Capture a real fixture under `test/fixtures/<site>/` and assert the parser's
+   output in `test/probe.test.js`.
+3. Wire the surface into the fetch list in `functions/api/probe.js` and map it to
+   a coverage dimension in `functions/api/_probe/report.js` (add a `HINTS` entry
+   for the absent case).
+4. `npm test`, then `make build` and re-run the gates.
 
 ## How to update brand constants
 

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/agent-skills-discovery-rfc/main/schema/index.schema.json",
+  "version": "0.2.0",
+  "publisher": {
+    "name": "Agent Ready POC",
+    "url": "https://agentreadypoc.com",
+    "contact": "founder@agentreadypoc.com"
+  },
+  "skills": [
+    {
+      "name": "get_organization_info",
+      "type": "http",
+      "description": "Returns a JSON summary of the organization: services with named frameworks, contact info, discovery URLs, and build provenance.",
+      "url": "https://agentreadypoc.com/api/agent-info",
+      "method": "GET",
+      "openapi": "https://agentreadypoc.com/openapi.json#/paths/~1api~1agent-info"
+    },
+    {
+      "name": "submit_contact",
+      "type": "http",
+      "description": "Submit a Turnstile-verified contact message. Requires a Turnstile widget token from the form at /contact/.",
+      "url": "https://agentreadypoc.com/api/contact",
+      "method": "POST",
+      "openapi": "https://agentreadypoc.com/openapi.json#/paths/~1api~1contact",
+      "auth": "cloudflare-turnstile"
+    }
+  ]
+}
