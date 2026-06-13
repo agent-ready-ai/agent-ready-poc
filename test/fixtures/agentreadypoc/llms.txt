@@ -17,7 +17,6 @@
 - [Blog](/blog/): Long-form notes (post-publication).
 - [FAQ](/faq/): Twelve questions about the project, the build, and applying the methodology elsewhere. FAQPage JSON-LD schema.
 - [Contact](/contact/): founder@agentreadypoc.com; Cloudflare Email Routing; Turnstile-protected form gated on a configured site key.
-- [Probe](/probe/): agent-readiness inspector — fetches and parses any site's discovery surfaces (llms.txt, Markdown, MCP, agent-skills, OpenAPI, OpenID, pricing) and reports a 7-point coverage board. Read-only, deterministic, zero-token.
 
 ## Verification
 
@@ -31,5 +30,4 @@
 - [robots.txt](/robots.txt) — non-blanket AI bot rules: training-only bots disallowed (GPTBot, Google-Extended, anthropic-ai, CCBot, Applebot-Extended, Bytespider, FacebookBot); inference bots welcomed (ChatGPT-User, ClaudeBot, PerplexityBot, OAI-SearchBot).
 - [llms-full.txt](/llms-full.txt) — concatenated content of every page.
 - [/api/agent-info](/api/agent-info) — JSON summary of the organization, services, and discovery URLs. Wildcard CORS; GET-only.
-- [/api/probe](/api/probe) — POST { "target": "<url>" } → JSON coverage report of that site's agent-ready surfaces. Read-only inspector: fetches and parses public discovery files; never calls, authenticates, or transacts. Powers /probe/.
 - [Source repository](https://github.com/agent-ready-ai/agent-ready-poc) — full source, MIT licensed.

@@ -9,7 +9,7 @@ article: true
 
 > **TL;DR.** Across two `/goal`-driven work sessions, an autonomous AI agent (Claude, running inside Claude Code) shipped this site end-to-end: Cloudflare hosting, custom domain, Turnstile-protected contact form with native Cloudflare email forwarding, an MCP server, twelve pages of real content with verifiable citations, three independent quality gates passing, an OWASP security review concluded. One human made eight high-judgment decisions; the agent did everything else. The full git history (22 annotated iteration tags plus `v1.0.0`) is public at [`github.com/agent-ready-ai/agent-ready-poc`](https://github.com/agent-ready-ai/agent-ready-poc).
 
-This is a case study about how the site was built more than what the site is. The site itself is described on [Services](/services/), [About](/about/), and [How we engage](/how-we-engage/). This page covers the *process*: what an operator actually had to do, where the agent chose not to take shortcuts, what was honestly hard, and what shipped at the end.
+This is a case study about how the site was built more than what the site is. The site itself is described on [Services](/services/), [About](/about/), and [How we engage](/how-we-engage/). This page covers the _process_: what an operator actually had to do, where the agent chose not to take shortcuts, what was honestly hard, and what shipped at the end.
 
 ## What got built
 
@@ -32,7 +32,7 @@ Three things, all about the relationship between agent and operator.
 
 The build plan reserved eight specific moments for human judgment: domain selection (with the agent presenting five candidates and a top pick), Turnstile site creation, baseline scan review, brand direction, Cloudflare dashboard configuration, all-gates-green sign-off, publication push, and a final review. Between checkpoints, the agent worked unsupervised. When something genuinely required a decision (should we accept Lighthouse SEO 92 to keep Cloudflare's Bot Access Control at green; should we rewrite git history to remove the spec files before publication; should we go with a third-party email vendor or build a Cloudflare-native mailer Worker), the agent surfaced it, presented options with trade-offs, and waited.
 
-The operator wrote no code. Did no architecture. Wrote no commit messages. Their work was almost entirely *direction*: eight checkpoints plus a handful of mid-build redirects when the spec collided with reality.
+The operator wrote no code. Did no architecture. Wrote no commit messages. Their work was almost entirely _direction_: eight checkpoints plus a handful of mid-build redirects when the spec collided with reality.
 
 ### 2. Honest constraints carried more weight than score-chasing
 
@@ -46,7 +46,7 @@ The build plan explicitly forbade this:
 
 The agent honored these. Gate 3 scored 114/125 instead of 125/125. The three lost points are the "attributed expert quotes" dimension, where genuine third-party quotes weren't available and fabrication was off the table. Gate 1 scored 83/100 (Level 5 "Agent-Native") instead of 100. The missing 17 are OAuth discovery, OAuth Protected Resource, and one MCP discovery variant, all of which would have required publishing metadata for services this static site doesn't actually run. Those gaps are deliberate choices, not oversights; the annotated tag messages at the iterations where each was considered explain the trade-off.
 
-There's a second category of honest constraint: when standards bodies disagreed. Cloudflare's Agent Ready scanner wants a `Content-Signal:` directive *inside* `robots.txt`. Google's robots.txt validator (which Lighthouse uses) flags that same directive as "Unknown" and penalizes the SEO score eight points. The agent surfaced the conflict; the operator chose the Cloudflare-aligned posture; SEO settles at 92 across every page, and a project memory was saved so future maintainers don't "fix" it by removing the directive and silently regressing Gate 1.
+There's a second category of honest constraint: when standards bodies disagreed. Cloudflare's Agent Ready scanner wants a `Content-Signal:` directive _inside_ `robots.txt`. Google's robots.txt validator (which Lighthouse uses) flags that same directive as "Unknown" and penalizes the SEO score eight points. The agent surfaced the conflict; the operator chose the Cloudflare-aligned posture; SEO settles at 92 across every page, and a project memory was saved so future maintainers don't "fix" it by removing the directive and silently regressing Gate 1.
 
 ### 3. Self-reference: the patterns described are the patterns used
 
@@ -56,11 +56,11 @@ The site is its own demo of the pattern it describes.
 
 ## The three quality gates, current state
 
-| | Required | Final |
-|---|---|---|
-| **Gate 1** — Cloudflare Agent Ready scanner | Discoverability, Content Accessibility, Bot Access Control all GREEN | All three 100/100. Overall 83/100, Level 5 "Agent-Native" |
-| **Gate 2** — Lighthouse + axe-core + W3C HTML validator | Perf/A11y/BP/SEO ≥95 desktop, ≥90 mobile | 100/100/100/92 on every page × both form factors; 0 axe violations; 0 W3C errors; LCP under 500ms desktop, under 1800ms mobile; CLS 0; INP 0 |
-| **Gate 3** — 125-point content audit | At least one service page ≥105; others ≥100 | 114/125 on every service page |
+| Gate                                                    | Required                                                             | Final                                                                                                                                        |
+| ------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Gate 1** — Cloudflare Agent Ready scanner             | Discoverability, Content Accessibility, Bot Access Control all GREEN | All three 100/100. Overall 83/100, Level 5 "Agent-Native"                                                                                    |
+| **Gate 2** — Lighthouse + axe-core + W3C HTML validator | Perf/A11y/BP/SEO ≥95 desktop, ≥90 mobile                             | 100/100/100/92 on every page × both form factors; 0 axe violations; 0 W3C errors; LCP under 500ms desktop, under 1800ms mobile; CLS 0; INP 0 |
+| **Gate 3** — 125-point content audit                    | At least one service page ≥105; others ≥100                          | 114/125 on every service page                                                                                                                |
 
 Gate verification is itself automated: the headless [`make scan`](https://github.com/agent-ready-ai/agent-ready-poc/blob/main/scripts/scan.js) script drives Chromium against `isitagentready.com`, waits for the JS-rendered results, and extracts category scores plus per-check failure detail. No manual browser step.
 

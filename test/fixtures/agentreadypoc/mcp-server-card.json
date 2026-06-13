@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/schema/server-card.schema.json",
+  "serverInfo": {
+    "name": "agent-ready-poc",
+    "version": "1.0.0",
+    "vendor": "Agent Ready POC",
+    "url": "https://agentreadypoc.com",
+    "description": "Two-tool MCP server that wraps this site's HTTP API: get_organization_info reads /api/agent-info; submit_contact wraps the Turnstile-verified /api/contact POST. Built by Claude (Anthropic) via Claude Code."
+  },
+  "protocolVersion": "2024-11-05",
+  "transport": {
+    "type": "http",
+    "endpoint": "https://agentreadypoc.com/mcp",
+    "methods": ["POST"]
+  },
+  "capabilities": {
+    "tools": {}
+  },
+  "tools": [
+    {
+      "name": "get_organization_info",
+      "description": "Returns a JSON summary of Agent Ready POC: organization metadata, three services with named frameworks, contact info, and discovery URLs."
+    },
+    {
+      "name": "submit_contact",
+      "description": "Submit a Turnstile-verified contact-form message to the operator. Requires a Turnstile token captured by the widget on /contact/."
+    }
+  ],
+  "documentation": "https://agentreadypoc.com/.well-known/agent-skills/index.json"
+}

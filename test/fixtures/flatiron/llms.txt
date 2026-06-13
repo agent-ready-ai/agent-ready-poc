@@ -1,0 +1,7 @@
+# Flatiron Building
+
+Official agent readiness document for flatironbuildingnyc.com.
+
+## API Catalog
+- Catalog: https://flatironbuildingnyc.com/.well-known/api-catalog.json
+- OpenID Config: https://flatironbuildingnyc.com/.well-known/openid-configuration

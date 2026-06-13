@@ -58,6 +58,15 @@ export async function onRequest(context) {
       llms: `${origin}/llms.txt`,
       llmsFull: `${origin}/llms-full.txt`,
     },
+    tools: {
+      probe: {
+        page: `${origin}/probe/`,
+        endpoint: `${origin}/api/probe`,
+        method: "POST",
+        description:
+          "Agent-readiness inspector. POST { target } to get a JSON coverage report of a site's agent surfaces (discoverable, readable, MCP, skills, API, auth, pricing). Read-only: fetches and parses public discovery files; never calls, authenticates, or transacts.",
+      },
+    },
     build: {
       builtBy:
         "Claude (Anthropic) via Claude Code, directed by one human operator",

@@ -22,6 +22,7 @@ const pages = [
   "src/contact.md",
   "src/how-we-engage.md",
   "src/faq.md",
+  "src/probe.md",
   "src/blog/index.md",
   "src/case-studies/index.md",
   "src/services/index.md",
@@ -47,7 +48,8 @@ for (const inputPath of pages) {
     continue;
   }
   const raw = await readFile(inputPath, "utf8");
-  const stripped = raw.replace(/^---\n[\s\S]*?\n---\n+/, "").replace(/\n+$/, "") + "\n";
+  const stripped =
+    raw.replace(/^---\n[\s\S]*?\n---\n+/, "").replace(/\n+$/, "") + "\n";
   const out = outputPath(inputPath);
   await mkdir(dirname(out), { recursive: true });
   await writeFile(out, stripped);
