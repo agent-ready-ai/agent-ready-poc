@@ -5,8 +5,9 @@ export default function (eleventyConfig) {
   });
 
   // String prefix test for nav aria-current handling.
-  eleventyConfig.addNunjucksFilter("startswith", (str, prefix) =>
-    typeof str === "string" && str.startsWith(prefix),
+  eleventyConfig.addNunjucksFilter(
+    "startswith",
+    (str, prefix) => typeof str === "string" && str.startsWith(prefix),
   );
 
   // Safe JSON encoder for embedding inside <script type="application/ld+json">.
@@ -51,6 +52,15 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/llms-full.txt": "llms-full.txt" });
   eleventyConfig.addPassthroughCopy({ "src/openapi.json": "openapi.json" });
   eleventyConfig.addPassthroughCopy({ "src/well-known": ".well-known" });
+
+  // Make code blocks keyboard-operable. A <pre> with horizontal overflow is a
+  // scrollable region; WCAG 2.1.1 requires it be reachable by keyboard, so it
+  // needs to be focusable. Add tabindex="0" to every <pre> that lacks one.
+  // (HTML output only; escaped "&lt;pre&gt;" inside code samples is untouched.)
+  eleventyConfig.addTransform("focusablePre", (content, outputPath) => {
+    if (!outputPath || !outputPath.endsWith(".html")) return content;
+    return content.replace(/<pre(?![^>]*\btabindex=)/g, '<pre tabindex="0"');
+  });
 
   return {
     dir: {
