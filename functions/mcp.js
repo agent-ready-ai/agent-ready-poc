@@ -23,6 +23,13 @@ const TOOLS = [
       properties: {},
       additionalProperties: false,
     },
+    annotations: {
+      title: "Get organization info",
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
   },
   {
     name: "submit_contact",
@@ -41,6 +48,13 @@ const TOOLS = [
         },
       },
       additionalProperties: false,
+    },
+    annotations: {
+      title: "Submit contact message",
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
     },
   },
 ];
@@ -124,7 +138,10 @@ export async function onRequest(context) {
       type: "mcp-server",
       protocolVersion: PROTOCOL_VERSION,
       serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
-      transport: { type: "http", endpoint: new URL("/mcp", request.url).toString() },
+      transport: {
+        type: "http",
+        endpoint: new URL("/mcp", request.url).toString(),
+      },
       capabilities: { tools: {} },
       hint: "POST JSON-RPC 2.0 here. Methods: initialize, tools/list, tools/call. See /.well-known/mcp/server-card.json.",
     });
@@ -142,7 +159,11 @@ export async function onRequest(context) {
     payload = await request.json();
   } catch {
     return jsonResponse(
-      { jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } },
+      {
+        jsonrpc: "2.0",
+        id: null,
+        error: { code: -32700, message: "Parse error" },
+      },
       400,
     );
   }
