@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/agent-ready-ai/agent-ready-poc/compare/v1.2.0...v1.3.0) (2026-06-14)
+
+
+### Features
+
+* **mcp:** annotate tools with readOnly/destructive hints ([2b2333c](https://github.com/agent-ready-ai/agent-ready-poc/commit/2b2333c2acef1ad9ca773f014568a2b7757baad0))
+* **probe:** consented live MCP session with safe-only invoke ([c8e23b8](https://github.com/agent-ready-ai/agent-ready-poc/commit/c8e23b842a829ae55cc76e77af2a71827187b42f))
+
 # [1.2.0](https://github.com/agent-ready-ai/agent-ready-poc/compare/v1.1.0...v1.2.0) (2026-06-14)
 
 
