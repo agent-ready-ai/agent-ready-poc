@@ -24,6 +24,7 @@ import {
   parsePricing,
 } from "../functions/api/_probe/parsers.js";
 import { buildReport } from "../functions/api/_probe/report.js";
+import { buildSummaryPrompt } from "../functions/api/_probe/ai.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fx = (site, file) =>
@@ -306,4 +307,35 @@ test("buildReport degrades to 0/7 when everything is missing", () => {
   });
   assert.equal(report.scoreValue, 0);
   for (const k of report.order) assert.equal(report.coverage[k], false);
+});
+
+// ----------------------------------------------------------------------------
+// AI summary prompt builder (pure; the network call is not unit-tested)
+// ----------------------------------------------------------------------------
+
+test("buildSummaryPrompt grounds the prompt in the report facts only", () => {
+  const report = {
+    target: "https://example.com",
+    score: "2/7",
+    order: ["discoverable", "mcp", "auth"],
+    surfaces: {
+      discoverable: {
+        label: "Discoverable",
+        present: true,
+        summary: "llms.txt — 5 links",
+      },
+      mcp: { label: "MCP", present: true, summary: "2 tools" },
+      auth: { label: "Auth", present: false, summary: "" },
+    },
+  };
+  const msgs = buildSummaryPrompt(report);
+  assert.equal(msgs.length, 2);
+  assert.equal(msgs[0].role, "system");
+  assert.equal(msgs[1].role, "user");
+  // The system prompt forbids invention and asks for grounded narration.
+  assert.match(msgs[0].content, /ONLY the facts/i);
+  // The user message carries the target, the present surfaces, and the absent one.
+  assert.match(msgs[1].content, /example\.com/);
+  assert.match(msgs[1].content, /llms\.txt — 5 links/);
+  assert.match(msgs[1].content, /Auth: absent/);
 });

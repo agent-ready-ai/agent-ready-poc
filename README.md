@@ -109,6 +109,36 @@ Determinism makes it testable: `npm test` runs the parsers and report assembly
 against captured fixtures in `test/fixtures/` (a rich 7/7 site and a sparse 5/7
 site) — same input, same output.
 
+### Optional live AI summary (NVIDIA)
+
+The scan is deterministic and zero-token. There is one opt-in, non-deterministic
+extra: an **Explain with AI** button that narrates the finished report.
+
+- **`functions/api/_probe/ai.js`** — `buildSummaryPrompt(report)` (pure, tested)
+  turns the report into chat messages; `summarizeWithNvidia(report, env)` POSTs
+  them to NVIDIA NIM (OpenAI-compatible, model `nvidia/nemotron-3-ultra-550b-a55b`)
+  and returns the narration. The model only ever sees the report Probe already
+  produced — it never decides what to fetch and never touches the scanned site.
+- **Trigger:** the function runs inference **only** when the request body is
+  `{ "target": ..., "summarize": true }`, which the widget sends only on an
+  explicit button click. A normal scan never calls the model, so the default
+  path stays zero-token and is not exposed to per-request inference cost/abuse.
+- **Cost & vendor note:** this is the one place the project leaves the
+  single-vendor Cloudflare path and incurs token cost. It is feature-flagged by
+  the presence of the key — if `NVIDIA_API_KEY` is unset, `aiAvailable` is false
+  and the button does not render.
+
+**Configure / rotate the key.** Get a key at <https://build.nvidia.com>. It is a
+secret — never commit it.
+
+- **Local dev:** put `NVIDIA_API_KEY=...` in `.env` (gitignored). `wrangler pages
+dev` loads it.
+- **Production:** set it as a Pages environment variable (Settings → Environment
+  variables) or `wrangler pages secret put NVIDIA_API_KEY`. Optionally override
+  the model with `NVIDIA_MODEL`.
+- **Rotate:** revoke the old key at build.nvidia.com, then replace it in both
+  places above. The key never enters the repo, a commit, or `.env.example`.
+
 ### How to add a parser
 
 1. Write a pure `parseX(input, baseUrl?)` in `functions/api/_probe/parsers.js`

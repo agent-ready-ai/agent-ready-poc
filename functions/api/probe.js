@@ -1,18 +1,25 @@
-// Probe — agent-readiness inspector (read-only, zero-token, single-vendor).
+// Probe — agent-readiness inspector (read-only, single-vendor).
 //
 // POST { "target": "<url-or-hostname>" } → JSON coverage report over the target's
 // agent-ready surfaces (llms.txt, Markdown negotiation, MCP, agent-skills,
 // OpenAPI/api-catalog, OpenID, pricing). The function fetches and parses
-// server-side (avoids CORS, keeps everything on Cloudflare). It is strictly
-// READ-ONLY: it issues GETs to well-known discovery paths, never calls a
-// discovered endpoint, never authenticates, never transacts. No model in the
-// loop; no PII captured, logged, or stored.
+// server-side (avoids CORS, keeps everything on Cloudflare). The INSPECTION is
+// strictly READ-ONLY and model-free: it issues GETs to well-known discovery
+// paths, never calls a discovered endpoint, never authenticates, never
+// transacts. No PII captured, logged, or stored.
+//
+// Optional: POST { "target": ..., "summarize": true } adds an AI-written
+// narration of the finished report via NVIDIA NIM (see _probe/ai.js). This is
+// the only non-deterministic path; it costs tokens and fires only on explicit
+// request, so the default scan stays zero-token. The LLM narrates already-
+// collected facts — it never decides what to fetch or touches the scanned site.
 //
 // Parsing lives in _probe/parsers.js (pure, unit-tested); coverage assembly in
 // _probe/report.js (pure, unit-tested). This file owns only the untrusted-input
 // boundary: method/size validation, SSRF host filtering, capped/timed fetches.
 
 import { buildReport } from "./_probe/report.js";
+import { summarizeWithNvidia } from "./_probe/ai.js";
 
 const MAX_BODY_BYTES = 2 * 1024; // request body cap — a URL is tiny
 const MAX_SURFACE_BYTES = 256 * 1024; // per-surface response cap
@@ -260,6 +267,24 @@ export async function onRequest(context) {
     const report = await inspect(origin);
     report.fetchedAt = new Date().toISOString();
     report.readOnly = true;
+    report.aiAvailable = !!(context.env && context.env.NVIDIA_API_KEY);
+
+    // Optional, explicit-only AI narration of the finished report. The scan
+    // above is already done and deterministic; this never changes the facts.
+    // A failure here degrades gracefully — the report still returns.
+    if (body && body.summarize === true) {
+      try {
+        report.aiSummary = await summarizeWithNvidia(report, context.env);
+      } catch (e) {
+        report.aiSummary = {
+          error:
+            e && e.code === "not-configured"
+              ? "AI summary is not configured on this deployment."
+              : "AI summary is temporarily unavailable.",
+        };
+      }
+    }
+
     return json(report, 200);
   } catch {
     // Never leak internals; degrade to a clean error.
