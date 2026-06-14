@@ -351,7 +351,11 @@ test("buildSummaryPrompt grounds the prompt in the report facts only", () => {
 // ----------------------------------------------------------------------------
 
 test("classifyTool: read-only, no-arg tool is safe", () => {
-  const t = { name: "get_organization_info", annotations: { readOnlyHint: true, destructiveHint: false }, inputSchema: { type: "object", properties: {} } };
+  const t = {
+    name: "get_organization_info",
+    annotations: { readOnlyHint: true, destructiveHint: false },
+    inputSchema: { type: "object", properties: {} },
+  };
   const v = classifyTool(t);
   assert.equal(v.safe, true);
   assert.deepEqual(v.reasons, []);
@@ -362,7 +366,10 @@ test("classifyTool: a tool requiring args (e.g. submit_contact) is never safe", 
   const t = {
     name: "submit_contact",
     annotations: { readOnlyHint: false, destructiveHint: false },
-    inputSchema: { type: "object", required: ["name", "email", "message", "cf_turnstile_response"] },
+    inputSchema: {
+      type: "object",
+      required: ["name", "email", "message", "cf_turnstile_response"],
+    },
   };
   const v = classifyTool(t);
   assert.equal(v.safe, false);
@@ -377,7 +384,10 @@ test("classifyTool: unannotated no-arg tool is NOT auto-trusted", () => {
 });
 
 test("classifyTool: an explicitly destructive tool is unsafe even if read-only-ish", () => {
-  const v = classifyTool({ name: "wipe", annotations: { readOnlyHint: true, destructiveHint: true } });
+  const v = classifyTool({
+    name: "wipe",
+    annotations: { readOnlyHint: true, destructiveHint: true },
+  });
   assert.equal(v.safe, false);
   assert.ok(v.reasons.some((r) => /destructive/.test(r)));
 });
@@ -402,13 +412,28 @@ test("diffTools: identical lists report no drift", () => {
 // ----------------------------------------------------------------------------
 
 test("isBlockedHost blocks private, loopback, link-local, and metadata hosts", () => {
-  for (const h of ["localhost", "127.0.0.1", "10.0.0.5", "192.168.1.1", "172.16.0.1", "169.254.169.254", "::1", "foo.internal", "100.64.0.1"]) {
+  for (const h of [
+    "localhost",
+    "127.0.0.1",
+    "10.0.0.5",
+    "192.168.1.1",
+    "172.16.0.1",
+    "169.254.169.254",
+    "::1",
+    "foo.internal",
+    "100.64.0.1",
+  ]) {
     assert.equal(isBlockedHost(h), true, `${h} should be blocked`);
   }
 });
 
 test("isBlockedHost allows public hosts", () => {
-  for (const h of ["agentreadypoc.com", "flatironbuildingnyc.com", "1.1.1.1", "8.8.8.8"]) {
+  for (const h of [
+    "agentreadypoc.com",
+    "flatironbuildingnyc.com",
+    "1.1.1.1",
+    "8.8.8.8",
+  ]) {
     assert.equal(isBlockedHost(h), false, `${h} should be allowed`);
   }
 });
@@ -422,6 +447,51 @@ test("validateMcpEndpoint requires https to a public host", () => {
 });
 
 test("normalizeTarget defaults to https origin and blocks private hosts", () => {
-  assert.equal(normalizeTarget("agentreadypoc.com").origin, "https://agentreadypoc.com");
+  assert.equal(
+    normalizeTarget("agentreadypoc.com").origin,
+    "https://agentreadypoc.com",
+  );
   assert.equal(normalizeTarget("http://localhost:9000"), null);
+});
+
+// ----------------------------------------------------------------------------
+// SSRF guard — IPv6 bypass hardening (regression tests for the security review)
+// ----------------------------------------------------------------------------
+
+test("isBlockedHost blocks IPv4-mapped IPv6 and NAT64 wrappers", () => {
+  for (const h of [
+    "::ffff:169.254.169.254", // metadata, dotted-mapped
+    "::ffff:a9fe:a9fe", // metadata, hex-mapped (WHATWG serialization)
+    "::ffff:127.0.0.1", // loopback mapped
+    "::ffff:7f00:1", // loopback mapped, hex
+    "::ffff:10.0.0.1", // RFC1918 mapped
+    "64:ff9b::a9fe:a9fe", // NAT64 of metadata
+    "64:ff9b::169.254.169.254", // NAT64, dotted
+    "::1", // loopback
+    "::", // unspecified
+    "fe80::1", // link-local
+    "fc00::1", // ULA
+  ]) {
+    assert.equal(isBlockedHost(h), true, `${h} should be blocked`);
+  }
+});
+
+test("isBlockedHost still allows global unicast IPv6", () => {
+  for (const h of ["2606:4700:4700::1111", "2001:4860:4860::8888"]) {
+    assert.equal(isBlockedHost(h), false, `${h} should be allowed`);
+  }
+});
+
+test("validateMcpEndpoint rejects mapped/NAT64 IPv6 endpoints", () => {
+  assert.equal(
+    validateMcpEndpoint("https://[::ffff:169.254.169.254]/mcp"),
+    null,
+  );
+  assert.equal(validateMcpEndpoint("https://[64:ff9b::a9fe:a9fe]/mcp"), null);
+  assert.equal(validateMcpEndpoint("https://[::1]/mcp"), null);
+});
+
+test("normalizeTarget rejects mapped-IPv6 metadata targets", () => {
+  assert.equal(normalizeTarget("http://[::ffff:169.254.169.254]"), null);
+  assert.equal(normalizeTarget("https://[::ffff:127.0.0.1]"), null);
 });

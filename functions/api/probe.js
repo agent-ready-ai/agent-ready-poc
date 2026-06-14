@@ -20,7 +20,7 @@
 
 import { buildReport } from "./_probe/report.js";
 import { summarizeWithNvidia } from "./_probe/ai.js";
-import { normalizeTarget } from "./_probe/ssrf.js";
+import { normalizeTarget, isBlockedHost } from "./_probe/ssrf.js";
 
 const MAX_BODY_BYTES = 2 * 1024; // request body cap — a URL is tiny
 const MAX_SURFACE_BYTES = 256 * 1024; // per-surface response cap
@@ -85,6 +85,27 @@ async function fetchSurface(url, { accept = "*/*", parseJson = false } = {}) {
       signal: controller.signal,
       cf: { cacheTtl: 300, cacheEverything: true },
     });
+    // Re-validate the final URL: a public target can 302 into an internal or
+    // metadata host. The pre-fetch check only saw the initial host. (Mirrors the
+    // post-redirect guard in probe-mcp.js.)
+    try {
+      const fu = new URL(res.url);
+      if (
+        (fu.protocol !== "http:" && fu.protocol !== "https:") ||
+        isBlockedHost(fu.hostname)
+      ) {
+        return {
+          ok: false,
+          status: 0,
+          contentType: "",
+          text: "",
+          url,
+          error: "blocked-redirect",
+        };
+      }
+    } catch {
+      /* res.url unparseable — fall through and let parsing handle it */
+    }
     const contentType = res.headers.get("content-type") || "";
     const text = await readCapped(res, MAX_SURFACE_BYTES);
     const result = { ok: res.ok, status: res.status, contentType, text, url };
