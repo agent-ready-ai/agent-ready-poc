@@ -87,8 +87,12 @@ Each surface is one standard way a site can make itself legible to agents. None 
 
 Surfaces in the wild disagree with each other. An api-catalog might use the RFC 9264 linkset shape or a plain endpoint array. An MCP card might put tools at the top level or nest them under a server entry. A skill might key its URL as `url` or as `path`. A catalog might advertise an OpenAPI document that returns a 404. Probe's parsers tolerate all of this: a malformed or missing surface degrades to "absent" or to an honest note, and never crashes the report. The parsers are pure functions with no network and no clock, tested against captured fixtures from real sites — same input, same output.
 
+## Optional: explain with AI
+
+The scan is deterministic and costs nothing. After a result renders, an optional **Explain with AI** button sends the finished report to a hosted model (NVIDIA Nemotron, via NVIDIA's OpenAI-compatible inference) and shows a short plain-English readiness assessment. This is the one path that uses a model and costs tokens, so it runs only when you click it — never automatically. The model narrates facts the deterministic scan already collected; it does not decide what to fetch and never touches the inspected site. The button appears only where an inference key is configured for the deployment.
+
 ## What read-only means here
 
-Probe is an inspector, not an actor. It reads the public files a site chooses to publish for agents and reports them back. It is the safe first step of any agent interaction: see what is on offer before deciding whether to engage. The boundary is deliberate and enforced in code — Probe has no path that calls a discovered endpoint.
+Probe is an inspector, not an actor. It reads the public files a site chooses to publish for agents and reports them back. It is the safe first step of any agent interaction: see what is on offer before deciding whether to engage. The boundary is deliberate and enforced in code — the inspection has no path that calls a discovered endpoint. The optional AI narration above is the only model in the loop, and it only ever sees the report Probe already produced.
 
 <script src="/assets/js/probe.js" defer></script>

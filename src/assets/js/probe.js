@@ -98,9 +98,72 @@
       ),
     );
 
+    // Optional live AI narration of the finished report. Off the deterministic
+    // path: costs tokens and runs only when the visitor clicks. Shown only where
+    // the deployment has an inference key configured.
+    if (data.aiAvailable) {
+      var aiWrap = el("div", { class: "probe-ai" });
+      var aiBtn = el(
+        "button",
+        { type: "button", class: "probe-ai-btn" },
+        "Explain with AI",
+      );
+      var aiOut = el("div", {
+        class: "probe-ai-out",
+        role: "status",
+        "aria-live": "polite",
+      });
+      aiBtn.addEventListener("click", function () {
+        requestSummary(data.target, aiBtn, aiOut);
+      });
+      aiWrap.appendChild(aiBtn);
+      aiWrap.appendChild(aiOut);
+      results.appendChild(aiWrap);
+    }
+
     // Move focus to the result heading so screen-reader and keyboard users land
     // on the new content rather than staying on the submit button.
     heading.focus();
+  }
+
+  function requestSummary(target, btn, out) {
+    btn.disabled = true;
+    out.textContent = "Asking NVIDIA Nemotron…";
+    fetch("/api/probe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: target, summarize: true }),
+    })
+      .then(function (res) {
+        return res.json().catch(function () {
+          return {};
+        });
+      })
+      .then(function (data) {
+        var s = data && data.aiSummary;
+        if (s && s.text) {
+          out.textContent = "";
+          out.appendChild(el("p", { class: "probe-ai-text" }, s.text));
+          out.appendChild(
+            el(
+              "p",
+              { class: "probe-ai-attr" },
+              "— " +
+                (s.model || "model") +
+                " via " +
+                (s.provider || "NVIDIA") +
+                ". AI-generated, not deterministic.",
+            ),
+          );
+        } else {
+          out.textContent = s && s.error ? s.error : "AI summary unavailable.";
+          btn.disabled = false;
+        }
+      })
+      .catch(function () {
+        out.textContent = "Network error requesting the summary.";
+        btn.disabled = false;
+      });
   }
 
   function run(target) {
