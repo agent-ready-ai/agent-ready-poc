@@ -6,6 +6,17 @@
 // network, but we refuse obvious SSRF targets regardless: private, loopback,
 // link-local, CGNAT, multicast, and the cloud metadata address.
 
+// Is a dotted-decimal IPv4 (first two octets) in a blocked range?
+function isBlockedIPv4(a, b) {
+  if (a === 0 || a === 10 || a === 127) return true;
+  if (a === 169 && b === 254) return true; // link-local + cloud metadata
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT
+  if (a >= 224) return true; // multicast / reserved
+  return false;
+}
+
 export function isBlockedHost(hostname) {
   const h = (hostname || "").toLowerCase().replace(/^\[|\]$/g, "");
   if (!h) return true;
@@ -16,27 +27,32 @@ export function isBlockedHost(hostname) {
     h.endsWith(".internal")
   )
     return true;
-  // IPv6 loopback / link-local (fe80::/10) / unique-local (fc00::/7)
-  if (
-    h === "::1" ||
-    h.startsWith("fe8") ||
-    h.startsWith("fe9") ||
-    h.startsWith("fea") ||
-    h.startsWith("feb")
-  )
-    return true;
-  if (h.startsWith("fc") || h.startsWith("fd")) return true;
-  const m = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(h);
-  if (m) {
-    const a = Number(m[1]);
-    const b = Number(m[2]);
-    if (a === 0 || a === 10 || a === 127) return true;
-    if (a === 169 && b === 254) return true; // link-local + cloud metadata
-    if (a === 172 && b >= 16 && b <= 31) return true;
-    if (a === 192 && b === 168) return true;
-    if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT
-    if (a >= 224) return true; // multicast / reserved
+
+  // IPv6 literals. The WHATWG URL parser (used by Workers) compresses these, so
+  // an IPv4-mapped address arrives as e.g. "::ffff:a9fe:a9fe", not dotted. Such
+  // wrappers are a classic guard bypass — refuse them outright (no legitimate
+  // target here uses a mapped/NAT64 literal), and range-check any IPv6 that
+  // still carries a dotted IPv4 tail.
+  if (h.includes(":")) {
+    if (h === "::1" || h === "::") return true; // loopback / unspecified
+    if (
+      h.startsWith("fe8") ||
+      h.startsWith("fe9") ||
+      h.startsWith("fea") ||
+      h.startsWith("feb")
+    )
+      return true; // link-local fe80::/10
+    if (h.startsWith("fc") || h.startsWith("fd")) return true; // ULA fc00::/7
+    if (h.includes("::ffff:")) return true; // IPv4-mapped ::ffff:0:0/96
+    if (h.startsWith("64:ff9b:")) return true; // NAT64 well-known prefix
+    const emb = /:(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(h);
+    if (emb && isBlockedIPv4(Number(emb[1]), Number(emb[2]))) return true;
+    return false; // other (global unicast) IPv6
   }
+
+  const m = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(h);
+  if (m) return isBlockedIPv4(Number(m[1]), Number(m[2]));
+
   return false;
 }
 
