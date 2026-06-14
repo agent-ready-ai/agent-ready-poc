@@ -1,6 +1,6 @@
 {
   "name": "agent-ready-poc",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "Agent-ready static site demo deployed end-to-end on Cloudflare. Built by an autonomous AI agent.",
   "type": "module",

@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/agent-ready-ai/agent-ready-poc/compare/v1.1.0...v1.2.0) (2026-06-14)
+
+
+### Features
+
+* **probe:** add opt-in live AI summary via NVIDIA NIM ([f62e341](https://github.com/agent-ready-ai/agent-ready-poc/commit/f62e3415e23509a3fdc244279de5db5da58c7447))
+
 # [1.1.0](https://github.com/agent-ready-ai/agent-ready-poc/compare/v1.0.0...v1.1.0) (2026-06-13)
 
 
