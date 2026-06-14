@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/agent-ready-ai/agent-ready-poc/compare/v1.3.0...v1.3.1) (2026-06-14)
+
+
+### Bug Fixes
+
+* **probe:** close two SSRF-guard gaps from security review ([9fc3f09](https://github.com/agent-ready-ai/agent-ready-poc/commit/9fc3f094bdf3b10b2db87c1cddef68dd8d191bbe))
+
 # [1.3.0](https://github.com/agent-ready-ai/agent-ready-poc/compare/v1.2.0...v1.3.0) (2026-06-14)
 
 
