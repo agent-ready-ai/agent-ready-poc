@@ -20,6 +20,7 @@
 
 import { buildReport } from "./_probe/report.js";
 import { summarizeWithNvidia } from "./_probe/ai.js";
+import { normalizeTarget } from "./_probe/ssrf.js";
 
 const MAX_BODY_BYTES = 2 * 1024; // request body cap — a URL is tiny
 const MAX_SURFACE_BYTES = 256 * 1024; // per-surface response cap
@@ -36,59 +37,6 @@ function json(body, status = 200, extraHeaders = {}) {
       ...extraHeaders,
     },
   });
-}
-
-// Block private, loopback, link-local, CGNAT, and metadata hosts. Defense in
-// depth: a Pages Function on Cloudflare's edge has no route to an operator's
-// internal network, but we refuse obvious SSRF targets regardless.
-function isBlockedHost(hostname) {
-  const h = (hostname || "").toLowerCase().replace(/^\[|\]$/g, "");
-  if (!h) return true;
-  if (
-    h === "localhost" ||
-    h.endsWith(".localhost") ||
-    h.endsWith(".local") ||
-    h.endsWith(".internal")
-  )
-    return true;
-  // IPv6 loopback / link-local (fe80::/10) / unique-local (fc00::/7)
-  if (
-    h === "::1" ||
-    h.startsWith("fe8") ||
-    h.startsWith("fe9") ||
-    h.startsWith("fea") ||
-    h.startsWith("feb")
-  )
-    return true;
-  if (h.startsWith("fc") || h.startsWith("fd")) return true;
-  const m = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(h);
-  if (m) {
-    const a = Number(m[1]);
-    const b = Number(m[2]);
-    if (a === 0 || a === 10 || a === 127) return true;
-    if (a === 169 && b === 254) return true; // link-local + cloud metadata
-    if (a === 172 && b >= 16 && b <= 31) return true;
-    if (a === 192 && b === 168) return true;
-    if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT
-    if (a >= 224) return true; // multicast / reserved
-  }
-  return false;
-}
-
-// Parse user input into a safe origin URL, or null if invalid/blocked.
-function normalizeTarget(input) {
-  let raw = String(input || "").trim();
-  if (!raw || raw.length > 2048) return null;
-  if (!/^https?:\/\//i.test(raw)) raw = "https://" + raw;
-  let url;
-  try {
-    url = new URL(raw);
-  } catch {
-    return null;
-  }
-  if (url.protocol !== "http:" && url.protocol !== "https:") return null;
-  if (isBlockedHost(url.hostname)) return null;
-  return new URL(url.origin); // probe paths hang off the origin only
 }
 
 async function readCapped(res, maxBytes) {
