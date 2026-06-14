@@ -25,6 +25,12 @@ import {
 } from "../functions/api/_probe/parsers.js";
 import { buildReport } from "../functions/api/_probe/report.js";
 import { buildSummaryPrompt } from "../functions/api/_probe/ai.js";
+import { classifyTool, diffTools } from "../functions/api/_probe/mcp.js";
+import {
+  isBlockedHost,
+  validateMcpEndpoint,
+  normalizeTarget,
+} from "../functions/api/_probe/ssrf.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fx = (site, file) =>
@@ -338,4 +344,84 @@ test("buildSummaryPrompt grounds the prompt in the report facts only", () => {
   assert.match(msgs[1].content, /example\.com/);
   assert.match(msgs[1].content, /llms\.txt — 5 links/);
   assert.match(msgs[1].content, /Auth: absent/);
+});
+
+// ----------------------------------------------------------------------------
+// MCP safety classification + drift (pure)
+// ----------------------------------------------------------------------------
+
+test("classifyTool: read-only, no-arg tool is safe", () => {
+  const t = { name: "get_organization_info", annotations: { readOnlyHint: true, destructiveHint: false }, inputSchema: { type: "object", properties: {} } };
+  const v = classifyTool(t);
+  assert.equal(v.safe, true);
+  assert.deepEqual(v.reasons, []);
+  assert.deepEqual(v.requiredArgs, []);
+});
+
+test("classifyTool: a tool requiring args (e.g. submit_contact) is never safe", () => {
+  const t = {
+    name: "submit_contact",
+    annotations: { readOnlyHint: false, destructiveHint: false },
+    inputSchema: { type: "object", required: ["name", "email", "message", "cf_turnstile_response"] },
+  };
+  const v = classifyTool(t);
+  assert.equal(v.safe, false);
+  assert.ok(v.reasons.some((r) => /not annotated read-only/.test(r)));
+  assert.ok(v.reasons.some((r) => /requires arguments/.test(r)));
+});
+
+test("classifyTool: unannotated no-arg tool is NOT auto-trusted", () => {
+  const v = classifyTool({ name: "mystery", inputSchema: { type: "object" } });
+  assert.equal(v.safe, false);
+  assert.deepEqual(v.reasons, ["not annotated read-only"]);
+});
+
+test("classifyTool: an explicitly destructive tool is unsafe even if read-only-ish", () => {
+  const v = classifyTool({ name: "wipe", annotations: { readOnlyHint: true, destructiveHint: true } });
+  assert.equal(v.safe, false);
+  assert.ok(v.reasons.some((r) => /destructive/.test(r)));
+});
+
+test("diffTools detects card-vs-live drift", () => {
+  const card = [{ name: "a" }, { name: "b" }];
+  const live = [{ name: "b" }, { name: "c" }];
+  const d = diffTools(card, live);
+  assert.deepEqual(d.cardOnly, ["a"]);
+  assert.deepEqual(d.liveOnly, ["c"]);
+  assert.deepEqual(d.inBoth, ["b"]);
+  assert.equal(d.drift, true);
+});
+
+test("diffTools: identical lists report no drift", () => {
+  const d = diffTools([{ name: "x" }], [{ name: "x" }]);
+  assert.equal(d.drift, false);
+});
+
+// ----------------------------------------------------------------------------
+// SSRF guard (security-critical; shared by probe.js and probe-mcp.js)
+// ----------------------------------------------------------------------------
+
+test("isBlockedHost blocks private, loopback, link-local, and metadata hosts", () => {
+  for (const h of ["localhost", "127.0.0.1", "10.0.0.5", "192.168.1.1", "172.16.0.1", "169.254.169.254", "::1", "foo.internal", "100.64.0.1"]) {
+    assert.equal(isBlockedHost(h), true, `${h} should be blocked`);
+  }
+});
+
+test("isBlockedHost allows public hosts", () => {
+  for (const h of ["agentreadypoc.com", "flatironbuildingnyc.com", "1.1.1.1", "8.8.8.8"]) {
+    assert.equal(isBlockedHost(h), false, `${h} should be allowed`);
+  }
+});
+
+test("validateMcpEndpoint requires https to a public host", () => {
+  assert.ok(validateMcpEndpoint("https://agentreadypoc.com/mcp"));
+  assert.equal(validateMcpEndpoint("http://agentreadypoc.com/mcp"), null); // http rejected
+  assert.equal(validateMcpEndpoint("https://127.0.0.1/mcp"), null); // private rejected
+  assert.equal(validateMcpEndpoint("https://169.254.169.254/mcp"), null); // metadata rejected
+  assert.equal(validateMcpEndpoint("not a url"), null);
+});
+
+test("normalizeTarget defaults to https origin and blocks private hosts", () => {
+  assert.equal(normalizeTarget("agentreadypoc.com").origin, "https://agentreadypoc.com");
+  assert.equal(normalizeTarget("http://localhost:9000"), null);
 });

@@ -139,6 +139,31 @@ dev` loads it.
 - **Rotate:** revoke the old key at build.nvidia.com, then replace it in both
   places above. The key never enters the repo, a commit, or `.env.example`.
 
+### Live MCP session (consented, read-only)
+
+When discovery finds an MCP surface, `/probe` can open a live session to show the
+real tools (not just the published card) and run the safe ones.
+
+- **`functions/api/probe-mcp.js`** — POST `{ target, consent: true }` resolves the
+  target's MCP endpoint from its server-card, validates it
+  (`functions/api/_probe/ssrf.js`: https-only, blocks private/metadata hosts,
+  re-checks after redirects), then runs JSON-RPC `initialize` → `tools/list`. It
+  cross-checks the live list against the card (drift) and classifies every tool.
+- **`functions/api/_probe/mcp.js`** — pure, unit-tested `classifyTool` and
+  `diffTools`. A tool is **safe to call only if** the server annotates it
+  `readOnlyHint: true` and not `destructiveHint`, **and** it has no required
+  arguments. Everything else is listed with a reason and never called.
+- **Invoking** is a separate request — `{ action: "call", tool, consent: true }`
+  — and the server **re-runs `classifyTool` before every call**, so the browser
+  never decides what is safe. Without `consent: true`, the endpoint returns 403.
+  The page issues zero calls on load. Calls are naturally capped (≤1 `tools/call`
+  per request), time-limited, size-capped, and forward no credentials; no
+  response is stored.
+- **Annotations matter:** this site's own MCP tools in `functions/mcp.js` are
+  annotated (`get_organization_info` read-only; `submit_contact` not) so the safe
+  one is callable and the mutating one is correctly held back. Endpoints that
+  require the SSE transport are reported "listed, not invoked."
+
 ### How to add a parser
 
 1. Write a pure `parseX(input, baseUrl?)` in `functions/api/_probe/parsers.js`

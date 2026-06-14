@@ -856,6 +856,112 @@ table tbody {
   color: var(--c-ink-soft);
 }
 
+/* Live MCP session */
+.probe-mcp {
+  margin-top: var(--s-5);
+  border-top: var(--rule);
+  padding-top: var(--s-4);
+}
+.probe-mcp h3 {
+  margin: 0 0 var(--s-2);
+}
+.probe-mcp-intro {
+  margin: 0 0 var(--s-3);
+  color: var(--c-ink-soft);
+  font-size: var(--fs-step--1);
+}
+.probe-mcp-consent {
+  background: var(--c-accent-ink);
+  color: var(--c-paper);
+}
+.probe-mcp-consent:hover {
+  background: var(--c-ink);
+}
+.probe-mcp-consent:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.probe-mcp-out {
+  margin-top: var(--s-3);
+}
+.probe-mcp-meta,
+.probe-mcp-drift,
+.probe-mcp-status {
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  color: var(--c-ink-soft);
+  margin: 0 0 var(--s-2);
+}
+.probe-mcp-tools {
+  list-style: none;
+  padding: 0;
+  margin: var(--s-3) 0 0;
+  display: grid;
+  gap: var(--s-3);
+}
+.probe-mcp-tool {
+  padding: var(--s-3) var(--s-4);
+  border: var(--rule);
+  border-left: 3px solid var(--c-accent);
+  border-radius: var(--radius);
+}
+.probe-mcp-tool.is-unsafe {
+  border-left-color: var(--c-rule);
+}
+.probe-mcp-tool-head {
+  font-family: var(--font-sans);
+  margin: 0 0 var(--s-1);
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.probe-mcp-tag {
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--2, 0.8rem);
+  font-weight: 600;
+  padding: 0.1em 0.5em;
+  border: 1px solid var(--c-rule);
+  border-radius: var(--radius);
+  color: var(--c-ink-soft);
+}
+.is-safe .probe-mcp-tag {
+  color: var(--c-ink);
+  border-color: var(--c-accent);
+  background: var(--c-callout-bg);
+}
+.probe-mcp-tool-desc {
+  margin: 0;
+}
+.probe-mcp-reason {
+  margin: var(--s-2) 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-step--1);
+  color: var(--c-ink-soft);
+}
+.probe-mcp-run {
+  min-height: 0;
+  margin-top: var(--s-2);
+  padding: var(--s-2) var(--s-4);
+  font-size: var(--fs-step--1);
+}
+.probe-mcp-run:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.probe-mcp-run-out {
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-step--1);
+}
+.probe-mcp-facts {
+  margin: 0;
+}
+.probe-mcp-preview {
+  margin: var(--s-2) 0 0;
+  max-height: 16rem;
+  overflow: auto;
+}
+
 /* Print — strip color UI chrome, keep prose. */
 @media print {
   body {
