@@ -32,4 +32,5 @@
 - [llms-full.txt](/llms-full.txt) — concatenated content of every page.
 - [/api/agent-info](/api/agent-info) — JSON summary of the organization, services, and discovery URLs. Wildcard CORS; GET-only.
 - [/api/probe](/api/probe) — POST { "target": "<url>" } → JSON coverage report of that site's agent-ready surfaces. Read-only inspector: fetches and parses public discovery files; never calls, authenticates, or transacts. Powers /probe/.
+- [/api/probe-mcp](/api/probe-mcp) — POST { "target": "<url>", "consent": true } → live MCP session (initialize + tools/list) with card-vs-live drift; action:"call" invokes ONE tool only if it is annotated read-only, non-destructive, and argument-free. Consent required; mutating/auth tools shown, never called. Powers the live MCP panel on /probe/.
 - [Source repository](https://github.com/agent-ready-ai/agent-ready-poc) — full source, MIT licensed.

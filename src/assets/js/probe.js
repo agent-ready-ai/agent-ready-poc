@@ -121,9 +121,231 @@
       results.appendChild(aiWrap);
     }
 
+    // Live MCP session — consented, never automatic. Shown only when the scan
+    // found an MCP surface. Opening the session and running each tool are both
+    // separate, explicit clicks; the server re-checks safety on every call.
+    if (data.coverage && data.coverage.mcp) {
+      var mcpWrap = el("section", {
+        class: "probe-mcp",
+        "aria-label": "Live MCP session",
+      });
+      mcpWrap.appendChild(el("h3", null, "Live MCP session"));
+      mcpWrap.appendChild(
+        el(
+          "p",
+          { class: "probe-mcp-intro" },
+          "Probe can open a JSON-RPC session with this site's MCP endpoint to show the live tool list and how it compares to the published card. It will run a tool only if you click Run, and only tools the server marks read-only with no required arguments. Nothing runs until you choose.",
+        ),
+      );
+      var mcpBtn = el(
+        "button",
+        { type: "button", class: "probe-mcp-consent" },
+        "Open MCP session with " + data.target,
+      );
+      var mcpOut = el("div", {
+        class: "probe-mcp-out",
+        role: "log",
+        "aria-live": "polite",
+      });
+      mcpBtn.addEventListener("click", function () {
+        openMcpSession(data.target, mcpBtn, mcpOut);
+      });
+      mcpWrap.appendChild(mcpBtn);
+      mcpWrap.appendChild(mcpOut);
+      results.appendChild(mcpWrap);
+    }
+
     // Move focus to the result heading so screen-reader and keyboard users land
     // on the new content rather than staying on the submit button.
     heading.focus();
+  }
+
+  function openMcpSession(target, btn, out) {
+    btn.disabled = true;
+    clear(out);
+    out.appendChild(
+      el(
+        "p",
+        { class: "probe-mcp-status" },
+        "Opening MCP session with " + target + "…",
+      ),
+    );
+    fetch("/api/probe-mcp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: target, action: "list", consent: true }),
+    })
+      .then(function (res) {
+        return res.json().catch(function () {
+          return {};
+        });
+      })
+      .then(function (d) {
+        clear(out);
+        if (d.transportError) {
+          out.appendChild(
+            el(
+              "p",
+              { class: "probe-mcp-status" },
+              "MCP endpoint advertised, but no JSON-RPC session: " +
+                d.transportError +
+                ".",
+            ),
+          );
+          return;
+        }
+        if (!d.tools) {
+          out.appendChild(
+            el(
+              "p",
+              { class: "probe-mcp-status" },
+              d.message || d.error || "No live MCP tools found.",
+            ),
+          );
+          return;
+        }
+        var meta = el("p", { class: "probe-mcp-meta" });
+        meta.appendChild(
+          el(
+            "span",
+            null,
+            "Live session — protocol " + (d.protocolVersion || "?"),
+          ),
+        );
+        if (d.serverInfo && d.serverInfo.name)
+          meta.appendChild(el("span", null, " · " + d.serverInfo.name));
+        out.appendChild(meta);
+        if (d.drift) {
+          var drift = d.drift.drift
+            ? "Drift: card-only [" +
+              d.drift.cardOnly.join(", ") +
+              "], live-only [" +
+              d.drift.liveOnly.join(", ") +
+              "]"
+            : "Live tools match the published card.";
+          out.appendChild(el("p", { class: "probe-mcp-drift" }, drift));
+        }
+        var ul = el("ul", { class: "probe-mcp-tools" });
+        for (var i = 0; i < d.tools.length; i++) {
+          ul.appendChild(renderTool(target, d.tools[i]));
+        }
+        out.appendChild(ul);
+      })
+      .catch(function () {
+        clear(out);
+        out.appendChild(
+          el(
+            "p",
+            { class: "probe-mcp-status" },
+            "Network error opening the MCP session.",
+          ),
+        );
+        btn.disabled = false;
+      });
+  }
+
+  function renderTool(target, tool) {
+    var li = el("li", {
+      class: "probe-mcp-tool " + (tool.safe ? "is-safe" : "is-unsafe"),
+    });
+    var head = el("p", { class: "probe-mcp-tool-head" });
+    head.appendChild(el("code", null, tool.name));
+    head.appendChild(
+      el(
+        "span",
+        { class: "probe-mcp-tag" },
+        tool.safe ? "safe to run" : "not run",
+      ),
+    );
+    li.appendChild(head);
+    if (tool.description)
+      li.appendChild(
+        el("p", { class: "probe-mcp-tool-desc" }, tool.description),
+      );
+    if (tool.safe) {
+      var runBtn = el(
+        "button",
+        { type: "button", class: "probe-mcp-run" },
+        "Run " + tool.name,
+      );
+      var runOut = el("div", {
+        class: "probe-mcp-run-out",
+        role: "status",
+        "aria-live": "polite",
+      });
+      runBtn.addEventListener("click", function () {
+        runMcpTool(target, tool.name, runBtn, runOut);
+      });
+      li.appendChild(runBtn);
+      li.appendChild(runOut);
+    } else {
+      li.appendChild(
+        el(
+          "p",
+          { class: "probe-mcp-reason" },
+          "Not run: " + (tool.reasons || []).join("; "),
+        ),
+      );
+    }
+    return li;
+  }
+
+  function runMcpTool(target, toolName, btn, out) {
+    btn.disabled = true;
+    out.textContent = "Running " + toolName + "…";
+    fetch("/api/probe-mcp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        target: target,
+        action: "call",
+        tool: toolName,
+        consent: true,
+      }),
+    })
+      .then(function (res) {
+        return res.json().catch(function () {
+          return {};
+        });
+      })
+      .then(function (d) {
+        out.textContent = "";
+        if (d.refused) {
+          out.appendChild(
+            el("p", null, "Refused by Probe: " + (d.reasons || []).join("; ")),
+          );
+          return;
+        }
+        if (d.error) {
+          out.appendChild(el("p", null, "Call failed: " + d.error));
+          btn.disabled = false;
+          return;
+        }
+        out.appendChild(
+          el(
+            "p",
+            { class: "probe-mcp-facts" },
+            "status " +
+              d.httpStatus +
+              " · " +
+              d.latencyMs +
+              "ms · isError " +
+              d.isError +
+              " · keys [" +
+              (d.responseKeys || []).join(", ") +
+              "]",
+          ),
+        );
+        if (d.preview) {
+          var pre = el("pre", { class: "probe-mcp-preview", tabindex: "0" });
+          pre.appendChild(document.createTextNode(d.preview));
+          out.appendChild(pre);
+        }
+      })
+      .catch(function () {
+        out.textContent = "Network error running the tool.";
+        btn.disabled = false;
+      });
   }
 
   function requestSummary(target, btn, out) {
